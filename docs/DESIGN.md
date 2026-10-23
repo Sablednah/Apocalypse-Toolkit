@@ -80,11 +80,11 @@ direct entity: the player is melee, a Projectile is ranged. So:
 
 - **Shiv (and any knife-like weapon): in `#legendquest:finesse`** (an optional tag entry, so the mod runs without LQ).
   Crowbar and lead pipe stay STR.
-- **Grenade, molotov and other thrown entities: in `#legendquest:thrown`.**
+- **Grenade, molotov and other thrown entities: in `#legendquest:thrown`**, an ENTITY TYPE tag: add the thrown projectile entities, not the items.
 - **Hunting bow**: arrows are projectiles, DEX already.
 - **Guns must read as ranged.** A hit-scan shot has no projectile entity, so its direct entity would be the shooter
   and LQ would roll STR. Either fire real projectile entities, or (preferred, asked of the LegendQuest session on
-  2026-10-23) use a damage type in `#minecraft:is_projectile` and have LQ treat that tag as ranged too.
+  2026-10-23) use a damage type in `#minecraft:is_projectile` and LQ treats that tag as ranged (done, LegendQuest 0511978: a shot always rolls DEX).
 
 ## What ZARP has to rewire at the switch (Threadwork, ZARP repo)
 
