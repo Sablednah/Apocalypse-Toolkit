@@ -72,6 +72,20 @@ ammo in, targets out. **Right-click opens a GUI**: repair (with scrap or iron), 
 - **Hunting bow**: an improved bow, a survival weapon.
 - **Melee**: lead pipe, shiv (The Last of Us style), more improvised weapons later.
 
+## LegendQuest attack stats (LegendQuest 654201e, 2026-10-23)
+
+LegendQuest rolls attacks on STR in melee and DEX with projectiles, and the better of the two for
+`#legendquest:finesse` items (melee) and `#legendquest:thrown` entity types (projectiles). It decides by the damage's
+direct entity: the player is melee, a Projectile is ranged. So:
+
+- **Shiv (and any knife-like weapon): in `#legendquest:finesse`** (an optional tag entry, so the mod runs without LQ).
+  Crowbar and lead pipe stay STR.
+- **Grenade, molotov and other thrown entities: in `#legendquest:thrown`.**
+- **Hunting bow**: arrows are projectiles, DEX already.
+- **Guns must read as ranged.** A hit-scan shot has no projectile entity, so its direct entity would be the shooter
+  and LQ would roll STR. Either fire real projectile entities, or (preferred, asked of the LegendQuest session on
+  2026-10-23) use a damage type in `#minecraft:is_projectile` and have LQ treat that tag as ranged too.
+
 ## What ZARP has to rewire at the switch (Threadwork, ZARP repo)
 
 Found 2026-10-23; all of this names GBG today:
