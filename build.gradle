@@ -1,0 +1,113 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.144'
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+// The jar carries the Minecraft version it was built against, matching the family
+// convention, even though this repo only ever builds one: apocalypse_toolkit-0.1.0+mc26.2.jar.
+// The version INSIDE neoforge.mods.toml stays plain.
+version = "${mod_version}+mc${minecraft_version}"
+group = mod_group_id
+
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+}
+
+repositories {
+}
+
+base {
+    archivesName = mod_id
+}
+
+// 26.x ships Java 25.
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+neoForge {
+    version = project.neo_version
+
+    if (project.parchment_minecraft_version?.trim() && project.parchment_mappings_version?.trim()) {
+        parchment {
+            minecraftVersion = project.parchment_minecraft_version
+            mappingsVersion = project.parchment_mappings_version
+        }
+    }
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            jvmArgument '-Xmx2G'
+            programArgument '--nogui'
+            programArguments.addAll '--port', project.dev_server_port
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+// The most recently built <prefix>*.jar for THIS Minecraft line in a sibling's build/libs,
+// or nothing. Same helper as Chronicler's build.gradle, for the same reason (newest by
+// mtime, not by name — version strings don't sort, and a rebuilt jar keeps its old name).
+def newestJar(String dir, String prefix) {
+    def tag = "+mc${minecraft_version}.jar"
+    def d = file(dir)
+    if (!d.isDirectory()) return []
+    def jars = d.listFiles().findAll { it.name.startsWith(prefix) && it.name.endsWith(tag) && !it.name.contains('-sources') }
+    return jars.isEmpty() ? [] : [jars.max { it.lastModified() }]
+}
+
+// The pack instance's copy, when a sibling's build/libs has no jar for this line (a sibling session
+// building another Minecraft line clears it, which broke this build on 2026-10-01). That copy is also
+// the version players get, so compiling against it is never wrong, only possibly older.
+def compileJar(String dir, String prefix) {
+    def instanceMods = (System.getenv('THREADWORK_INSTANCE') ?: '/mnt/c/Users/darre/curseforge/minecraft/Instances/LegendQuest ZARP') + '/mods'
+    def jar = newestJar(dir, prefix)
+    return jar.isEmpty() ? newestJar(instanceMods, prefix) : jar
+}
+
+dependencies {
+}
+
+
+// src/main/templates/META-INF/neoforge.mods.toml is NOT under src/main/resources, so plain
+// processResources never sees it — a dedicated task expands it into a generated resources
+// dir, which is then added as its own resources source. Same shape as Cast/Chronicler's
+// build.gradle; skip that and the mods.toml silently never ships (a jar with no mods.toml
+// isn't a mod NeoForge will load at all — this bit Threadwork itself before it was caught,
+// see CLAUDE.md "Known traps").
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata

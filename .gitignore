@@ -1,0 +1,12 @@
+.gradle/
+build/
+run/
+runServer/
+logs/
+*.log
+bin/
+.idea/
+*.iml
+out/
+
+tools/audio/.venv/
