@@ -94,7 +94,7 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         if (--be.cooldown > 0) return;
         be.cooldown = RATE;
         if (be.mode == Mode.OFF || be.health <= 0 || be.items.get(AMMO).isEmpty()) return;
-        Vec3 muzzle = Vec3.atCenterOf(pos).add(0, 0.35, 0);
+        Vec3 muzzle = Vec3.atCenterOf(pos).add(0, 0.5, 0);           // above its own model, so its sight starts clear
         Optional<LivingEntity> target = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE),
                         e -> be.wants(server, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE && be.sees(server, muzzle, e))
                 .stream().min(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle)));

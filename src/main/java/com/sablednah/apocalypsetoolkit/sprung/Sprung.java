@@ -143,6 +143,17 @@ public final class Sprung {
         schedule(level, pos, CLOSE_DELAY);
     }
 
+    /** The game time a close is due at {@code pos}, or -1 (the self-test). */
+    public static long pendingAt(ServerLevel level, BlockPos pos) {
+        var m = PENDING.get(level.dimension());
+        return m == null ? -1 : m.getOrDefault(pos, -1L);
+    }
+
+    /** Closes a sprung block at {@code pos} after the usual delay, as if it had just been opened (the self-test). */
+    public static void scheduleClose(ServerLevel level, BlockPos pos) {
+        schedule(level, pos, CLOSE_DELAY);
+    }
+
     private static void schedule(ServerLevel level, BlockPos pos, int ticks) {
         PENDING.computeIfAbsent(level.dimension(), k -> new HashMap<>()).put(pos.immutable(), level.getGameTime() + ticks);
     }

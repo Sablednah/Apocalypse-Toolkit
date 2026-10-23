@@ -156,7 +156,7 @@ public class GunItem extends Item {
             stop = hit.getLocation();
             Entity target = hit.getEntity();
             float damage = spec.damage();
-            if (target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.3) damage *= spec.headshot();
+            if (target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.15) damage *= spec.headshot();
             target.invulnerableTime = 0;                       // every pellet of a shotgun blast counts
             target.hurtServer(level, source(level, player), damage);
             level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, stop.x, stop.y, stop.z, 2, 0.1, 0.1, 0.1, 0.05);

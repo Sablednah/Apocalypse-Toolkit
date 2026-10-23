@@ -10,11 +10,13 @@ import net.neoforged.fml.loading.FMLEnvironment;
 @Mod(ApocalypseToolkit.MOD_ID)
 public final class ApocalypseToolkit {
     public static final String MOD_ID = "apocalypse_toolkit";
+    public static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("Apocalypse Toolkit");
 
     public ApocalypseToolkit(IEventBus modBus) {
         ModRegistry.register(modBus);
         ReloadPayload.register(modBus);
         com.sablednah.apocalypsetoolkit.sprung.Sprung.register(modBus);
+        SelfTest.register();
         if (FMLEnvironment.getDist().isClient()) com.sablednah.apocalypsetoolkit.client.ToolkitClient.register(modBus);
     }
 }

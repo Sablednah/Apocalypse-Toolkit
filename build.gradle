@@ -49,6 +49,8 @@ neoForge {
             jvmArgument '-Xmx2G'
             programArgument '--nogui'
             programArguments.addAll '--port', project.dev_server_port
+            // -Pselftest -> SelfTest runs on ServerStartedEvent, prints PASS/FAIL and stops the server.
+            systemProperty 'apocalypse_toolkit.selftest', project.hasProperty('selftest') ? 'true' : 'false'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
     }
