@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:bow",
+    "minecraft:string",
+    "minecraft:leather",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:hunting_bow",
+    "count": 1
+  }
+}

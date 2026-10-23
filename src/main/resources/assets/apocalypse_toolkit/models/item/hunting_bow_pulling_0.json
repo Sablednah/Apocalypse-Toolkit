@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "apocalypse_toolkit:item/hunting_bow_pulling_0"
+  }
+}

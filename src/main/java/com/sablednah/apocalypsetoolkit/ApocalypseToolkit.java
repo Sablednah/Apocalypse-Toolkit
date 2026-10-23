@@ -14,6 +14,7 @@ public final class ApocalypseToolkit {
     public ApocalypseToolkit(IEventBus modBus) {
         ModRegistry.register(modBus);
         ReloadPayload.register(modBus);
+        com.sablednah.apocalypsetoolkit.sprung.Sprung.register(modBus);
         if (FMLEnvironment.getDist().isClient()) com.sablednah.apocalypsetoolkit.client.ToolkitClient.register(modBus);
     }
 }

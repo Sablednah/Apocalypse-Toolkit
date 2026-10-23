@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "N",
+    "S"
+  ],
+  "key": {
+    "N": "minecraft:iron_nugget",
+    "S": "minecraft:string"
+  },
+  "result": {
+    "id": "apocalypse_toolkit:shiv",
+    "count": 1
+  }
+}

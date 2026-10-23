@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " I",
+    "I "
+  ],
+  "key": {
+    "I": "minecraft:iron_block"
+  },
+  "result": {
+    "id": "apocalypse_toolkit:lead_pipe",
+    "count": 1
+  }
+}

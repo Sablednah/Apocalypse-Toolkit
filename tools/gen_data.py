@@ -60,13 +60,29 @@ shapeless("medkit", [ns("bandage"), ns("bandage"), "minecraft:glistering_melon_s
 shapeless("adrenaline_syringe", ["minecraft:glass_bottle", "minecraft:sugar", "minecraft:sugar", "minecraft:iron_nugget"], 1, "misc")
 shapeless("antidote_syringe", ["minecraft:glass_bottle", "minecraft:honeycomb", "minecraft:iron_nugget"], 1, "misc")
 
+# sprung doors, trapdoors and gates: any of them plus an iron nugget (a pack swaps the material)
+w(f"{DATA}/{NS}/tags/item/sprungable.json", {"values": ["#minecraft:doors", "#minecraft:trapdoors", "#minecraft:fence_gates"]})
+w(f"{DATA}/{NS}/recipe/sprung.json", {"type": ns("sprung"), "item": f"#{NS}:sprungable", "material": "minecraft:iron_nugget"})
+
+# improvised gear
+w(f"{DATA}/{NS}/tags/block/crowbar_mineable.json", {"values": [
+    "minecraft:chest", "minecraft:trapped_chest", "minecraft:barrel",
+    {"id": "#c:chests", "required": False}, {"id": "#c:barrels", "required": False}]})
+w(f"{DATA}/legendquest/tags/item/finesse.json", {"replace": False, "values": [{"id": ns("shiv"), "required": False}]})
+w(f"{DATA}/{NS}/tags/item/melee.json", {"values": [ns("crowbar"), ns("lead_pipe"), ns("shiv")]})
+shaped("crowbar", ["  I", " I ", "I  "], {"I": I})
+shaped("lead_pipe", [" I", "I "], {"I": "minecraft:iron_block"})
+shaped("shiv", ["N", "S"], {"N": "minecraft:iron_nugget", "S": "minecraft:string"})
+shapeless("hunting_bow", ["minecraft:bow", "minecraft:string", "minecraft:leather", "minecraft:iron_nugget"])
+
 # ---- lang -----------------------------------------------------------------------------------
 names = {
     "pistol": "Pistol", "smg": "SMG", "shotgun": "Shotgun", "rifle": "Rifle", "sniper_rifle": "Sniper Rifle",
     "laser_rifle": "Laser Rifle", "pistol_rounds": "Pistol Rounds", "shotgun_shell": "Shotgun Shell",
     "rifle_rounds": "Rifle Rounds", "sniper_round": "Sniper Round", "laser_cell": "Laser Cell", "grenade": "Grenade",
     "molotov": "Molotov", "bandage": "Bandage", "medkit": "Medkit", "adrenaline_syringe": "Adrenaline Syringe",
-    "antidote_syringe": "Antidote Syringe",
+    "antidote_syringe": "Antidote Syringe", "crowbar": "Crowbar", "lead_pipe": "Lead Pipe", "shiv": "Shiv",
+    "hunting_bow": "Hunting Bow",
 }
 lang = {f"item.{NS}.{k}": v for k, v in names.items()}
 lang.update({f"entity.{NS}.{e}": names[e] for e in THROWN})
@@ -79,6 +95,7 @@ lang.update({
     "tooltip.apocalypse_toolkit.ammo": "Ammo: %s/%s (%s)",
     "tooltip.apocalypse_toolkit.stats": "Damage %s, range %s, %s shots a second",
     "tooltip.apocalypse_toolkit.zoom": "Sneak to aim through the scope",
+    "tooltip.apocalypse_toolkit.sprung": "Sprung: swings shut behind you",
     "block.apocalypse_toolkit.sentry": "Sentry Turret", "sentry.apocalypse_toolkit.title": "%s's Sentry",
     "sentry.apocalypse_toolkit.wear": "Condition %s/%s", "sentry.apocalypse_toolkit.mode.off": "Off",
     "sentry.apocalypse_toolkit.mode.hostiles": "Hostiles", "sentry.apocalypse_toolkit.mode.hostiles_and_players": "+ Players",

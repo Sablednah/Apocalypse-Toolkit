@@ -143,6 +143,23 @@ public final class ModRegistry {
         return it;
     }
 
+    // ---- improvised gear ----------------------------------------------------------------------
+
+    /** What the crowbar opens fast: chests, barrels and anything tagged as one (a pack adds its crates). */
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> CROWBAR_MINEABLE =
+            net.minecraft.tags.TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(ID, "crowbar_mineable"));
+    private static final net.minecraft.tags.TagKey<Item> IRON_REPAIR =
+            net.minecraft.tags.TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "ingots/iron"));
+    public static final net.minecraft.world.item.ToolMaterial SCRAP_IRON = new net.minecraft.world.item.ToolMaterial(
+            net.minecraft.tags.BlockTags.INCORRECT_FOR_IRON_TOOL, 250, 9.0F, 2.0F, 10, IRON_REPAIR);
+
+    public static final DeferredItem<Item> CROWBAR = item("crowbar", p -> p.tool(SCRAP_IRON, CROWBAR_MINEABLE, 3.0F, -2.4F, 0F));
+    public static final DeferredItem<Item> LEAD_PIPE = item("lead_pipe", p -> p.sword(SCRAP_IRON, 2.5F, -2.9F).durability(300));
+    public static final DeferredItem<Item> SHIV = item("shiv", p -> p.sword(SCRAP_IRON, -0.5F, -1.6F).durability(120));
+    public static final DeferredItem<com.sablednah.apocalypsetoolkit.gear.HuntingBowItem> HUNTING_BOW = ITEMS.registerItem("hunting_bow",
+            com.sablednah.apocalypsetoolkit.gear.HuntingBowItem::new, p -> p.durability(500).enchantable(1));
+    static { ORDER.add(HUNTING_BOW); }
+
     // ---- the sentry turret --------------------------------------------------------------------
 
     public static final net.neoforged.neoforge.registries.DeferredBlock<com.sablednah.apocalypsetoolkit.turret.SentryBlock> SENTRY =
