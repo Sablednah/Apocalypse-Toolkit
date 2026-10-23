@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "apocalypse_toolkit:bandage",
+    "apocalypse_toolkit:bandage",
+    "minecraft:glistering_melon_slice",
+    "minecraft:leather"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:medkit",
+    "count": 1
+  }
+}

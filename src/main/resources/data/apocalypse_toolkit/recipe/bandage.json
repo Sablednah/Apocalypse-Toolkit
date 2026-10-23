@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "#minecraft:wool",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:bandage",
+    "count": 3
+  }
+}

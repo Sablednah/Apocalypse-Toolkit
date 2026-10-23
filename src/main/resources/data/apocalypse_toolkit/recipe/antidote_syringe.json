@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:honeycomb",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:antidote_syringe",
+    "count": 1
+  }
+}

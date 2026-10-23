@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:gunpowder",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:shotgun_shell",
+    "count": 6
+  }
+}

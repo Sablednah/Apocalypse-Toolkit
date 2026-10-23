@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "DIE",
+    "RTR"
+  ],
+  "key": {
+    "D": "minecraft:diamond",
+    "I": "minecraft:iron_ingot",
+    "E": "minecraft:ender_eye",
+    "R": "minecraft:redstone_block",
+    "T": "minecraft:tripwire_hook"
+  },
+  "result": {
+    "id": "apocalypse_toolkit:laser_rifle",
+    "count": 1
+  }
+}

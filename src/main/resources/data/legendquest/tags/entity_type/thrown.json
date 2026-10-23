@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "apocalypse_toolkit:grenade",
+      "required": false
+    },
+    {
+      "id": "apocalypse_toolkit:molotov",
+      "required": false
+    }
+  ]
+}

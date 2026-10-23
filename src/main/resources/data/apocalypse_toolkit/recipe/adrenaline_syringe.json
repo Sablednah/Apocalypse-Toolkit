@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:sugar",
+    "minecraft:sugar",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:adrenaline_syringe",
+    "count": 1
+  }
+}

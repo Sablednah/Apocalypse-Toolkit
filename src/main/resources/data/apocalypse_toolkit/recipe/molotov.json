@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:string",
+    "#minecraft:coals"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:molotov",
+    "count": 1
+  }
+}

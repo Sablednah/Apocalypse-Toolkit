@@ -1,0 +1,116 @@
+{
+  "gun.pistol": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.pistol",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/pistol1",
+        "attenuation_distance": 48
+      },
+      {
+        "name": "apocalypse_toolkit:gun/pistol2",
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "gun.smg": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.smg",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/smg1",
+        "attenuation_distance": 48
+      },
+      {
+        "name": "apocalypse_toolkit:gun/smg2",
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "gun.shotgun": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.shotgun",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/shotgun1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "apocalypse_toolkit:gun/shotgun2",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "gun.rifle": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.rifle",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/rifle1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "apocalypse_toolkit:gun/rifle2",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "gun.sniper": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.sniper",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/sniper1",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "apocalypse_toolkit:gun/sniper2",
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "gun.laser": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.laser",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/laser1",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "apocalypse_toolkit:gun/laser2",
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "gun.empty": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.empty",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/empty",
+        "attenuation_distance": 12
+      }
+    ]
+  },
+  "gun.reload_start": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.reload_start",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/reload_start",
+        "attenuation_distance": 12
+      }
+    ]
+  },
+  "gun.reload_end": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.reload_end",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/reload_end",
+        "attenuation_distance": 12
+      }
+    ]
+  },
+  "gun.shell_in": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.shell_in",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/shell_in",
+        "attenuation_distance": 12
+      }
+    ]
+  }
+}

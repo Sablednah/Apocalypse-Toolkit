@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:redstone",
+    "minecraft:redstone",
+    "minecraft:glowstone_dust",
+    "minecraft:copper_ingot"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:laser_cell",
+    "count": 2
+  }
+}
