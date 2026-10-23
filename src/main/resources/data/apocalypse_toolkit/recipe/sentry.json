@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "IDI",
+    "RCR",
+    "I I"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "D": "minecraft:dispenser",
+    "R": "minecraft:redstone",
+    "C": "minecraft:observer"
+  },
+  "result": {
+    "id": "apocalypse_toolkit:sentry",
+    "count": 1
+  }
+}

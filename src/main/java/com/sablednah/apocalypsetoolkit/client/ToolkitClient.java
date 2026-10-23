@@ -32,6 +32,8 @@ public final class ToolkitClient {
             e.registerCategory(CATEGORY);
             e.register(RELOAD);
         });
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterMenuScreensEvent e) ->
+                e.register(ModRegistry.SENTRY_MENU.get(), SentryScreen::new));
         modBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> {
             e.registerEntityRenderer(ModRegistry.GRENADE_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.MOLOTOV_ENTITY.get(), ThrownItemRenderer::new);

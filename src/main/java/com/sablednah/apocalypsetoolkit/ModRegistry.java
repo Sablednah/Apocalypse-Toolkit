@@ -42,6 +42,10 @@ public final class ModRegistry {
     private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, ID);
     private static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, ID);
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ID);
+    private static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ID);
+    private static final DeferredRegister<net.minecraft.world.inventory.MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, ID);
 
     /** Every item in tab order. */
     private static final List<DeferredItem<? extends Item>> ORDER = new ArrayList<>();
@@ -139,6 +143,22 @@ public final class ModRegistry {
         return it;
     }
 
+    // ---- the sentry turret --------------------------------------------------------------------
+
+    public static final net.neoforged.neoforge.registries.DeferredBlock<com.sablednah.apocalypsetoolkit.turret.SentryBlock> SENTRY =
+            BLOCKS.registerBlock("sentry", com.sablednah.apocalypsetoolkit.turret.SentryBlock::new,
+                    p -> p.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.5F, 6F)
+                            .requiresCorrectToolForDrops().sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion());
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SENTRY_ITEM = ITEMS.registerSimpleBlockItem("sentry", SENTRY,
+            p -> p.rarity(Rarity.UNCOMMON));
+    static { ORDER.add(SENTRY_ITEM); }
+    public static final Supplier<net.minecraft.world.level.block.entity.BlockEntityType<com.sablednah.apocalypsetoolkit.turret.SentryBlockEntity>> SENTRY_BE =
+            BLOCK_ENTITIES.register("sentry", () -> new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                    com.sablednah.apocalypsetoolkit.turret.SentryBlockEntity::new, SENTRY.get()));
+    public static final Supplier<net.minecraft.world.inventory.MenuType<com.sablednah.apocalypsetoolkit.turret.SentryMenu>> SENTRY_MENU =
+            MENUS.register("sentry", () -> new net.minecraft.world.inventory.MenuType<>(
+                    com.sablednah.apocalypsetoolkit.turret.SentryMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
+
     // ---- the tab ------------------------------------------------------------------------------
 
     static {
@@ -156,7 +176,10 @@ public final class ModRegistry {
     }
 
     public static void register(IEventBus modBus) {
+        BLOCKS.register(modBus);
         ITEMS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
+        MENUS.register(modBus);
         COMPONENTS.register(modBus);
         ENTITIES.register(modBus);
         SOUNDS.register(modBus);

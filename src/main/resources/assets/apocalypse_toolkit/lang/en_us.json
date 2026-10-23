@@ -1,4 +1,5 @@
 {
+  "block.apocalypse_toolkit.sentry": "Sentry Turret",
   "death.attack.apocalypse_toolkit.bullet": "%1$s was shot by %2$s",
   "death.attack.apocalypse_toolkit.bullet.item": "%1$s was shot by %2$s using %3$s",
   "death.attack.apocalypse_toolkit.bullet.player": "%1$s was shot whilst fighting %2$s",
@@ -29,6 +30,12 @@
   "key.categories.apocalypse_toolkit.toolkit": "Apocalypse Toolkit",
   "key.category.apocalypse_toolkit.toolkit": "Apocalypse Toolkit",
   "message.apocalypse_toolkit.no_ammo": "No %s to load.",
+  "sentry.apocalypse_toolkit.mode.everything": "Everything",
+  "sentry.apocalypse_toolkit.mode.hostiles": "Hostiles",
+  "sentry.apocalypse_toolkit.mode.hostiles_and_players": "+ Players",
+  "sentry.apocalypse_toolkit.mode.off": "Off",
+  "sentry.apocalypse_toolkit.title": "%s's Sentry",
+  "sentry.apocalypse_toolkit.wear": "Condition %s/%s",
   "subtitles.apocalypse_toolkit.gun.empty": "Gun clicks empty",
   "subtitles.apocalypse_toolkit.gun.laser": "Laser fires",
   "subtitles.apocalypse_toolkit.gun.pistol": "Pistol fires",
