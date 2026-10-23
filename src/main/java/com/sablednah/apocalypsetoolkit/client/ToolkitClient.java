@@ -34,6 +34,16 @@ public final class ToolkitClient {
         });
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterMenuScreensEvent e) ->
                 e.register(ModRegistry.SENTRY_MENU.get(), SentryScreen::new));
+        // guns are held up and aimed (both arms, like a loaded crossbow), not dangled like a tool
+        modBus.addListener((net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent e) -> e.registerItem(
+                new net.neoforged.neoforge.client.extensions.common.IClientItemExtensions() {
+                    @Override
+                    public net.minecraft.client.model.HumanoidModel.ArmPose getArmPose(net.minecraft.world.entity.LivingEntity entity,
+                            net.minecraft.world.InteractionHand hand, net.minecraft.world.item.ItemStack stack) {
+                        return net.minecraft.client.model.HumanoidModel.ArmPose.CROSSBOW_HOLD;
+                    }
+                }, ModRegistry.PISTOL.get(), ModRegistry.SMG.get(), ModRegistry.SHOTGUN.get(), ModRegistry.RIFLE.get(),
+                ModRegistry.SNIPER_RIFLE.get(), ModRegistry.LASER_RIFLE.get()));
         modBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> {
             e.registerEntityRenderer(ModRegistry.GRENADE_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.MOLOTOV_ENTITY.get(), ThrownItemRenderer::new);

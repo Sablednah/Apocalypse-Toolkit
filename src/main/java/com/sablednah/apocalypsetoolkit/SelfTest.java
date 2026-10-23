@@ -88,6 +88,16 @@ public final class SelfTest {
             ItemStack crowbar = new ItemStack(ModRegistry.CROWBAR.get());
             float speed = crowbar.getDestroySpeed(Blocks.CHEST.defaultBlockState());
             check("crowbar opens chests fast", speed >= 8F, "speed " + speed);
+            for (String t : new String[] { "ammo_cache", "armoury", "medical_cabinet" }) {
+                var key = ResourceKey.create(Registries.LOOT_TABLE, Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "chests/" + t));
+                var lt = server.reloadableRegistries().getLootTable(key);
+                int items = 0;
+                for (int i = 0; i < 20; i++)
+                    items += lt.getRandomItems(new net.minecraft.world.level.storage.loot.LootParams.Builder(level)
+                            .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, net.minecraft.world.phys.Vec3.atCenterOf(base))
+                            .create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.CHEST)).size();
+                check("loot table " + t + " rolls items", lt != net.minecraft.world.level.storage.loot.LootTable.EMPTY && items > 0, items + " stacks in 20 rolls");
+            }
             check("medkit is consumable", new ItemStack(ModRegistry.MEDKIT.get()).has(DataComponents.CONSUMABLE), "");
 
             // ---- firing ----

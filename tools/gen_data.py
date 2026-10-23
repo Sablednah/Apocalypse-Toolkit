@@ -75,6 +75,27 @@ shaped("lead_pipe", [" I", "I "], {"I": "minecraft:iron_block"})
 shaped("shiv", ["N", "S"], {"N": "minecraft:iron_nugget", "S": "minecraft:string"})
 shapeless("hunting_bow", ["minecraft:bow", "minecraft:string", "minecraft:leather", "minecraft:iron_nugget"])
 
+# loot tables a pack can drop in (ZARP's Threadwork points CityWorld's hooks at these); quality: luck finds the rarer
+def entry(item, weight, lo=1, hi=1, quality=0):
+    e = {"type": "minecraft:item", "name": ns(item), "weight": weight}
+    if quality: e["quality"] = quality
+    if (lo, hi) != (1, 1):
+        e["functions"] = [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": lo, "max": hi}}]
+    return e
+
+def table(name, rolls, entries, empty=0):
+    pool = {"rolls": {"type": "minecraft:uniform", "min": rolls[0], "max": rolls[1]}, "entries": entries}
+    if empty: pool["entries"] = entries + [{"type": "minecraft:empty", "weight": empty, "quality": -2}]
+    w(f"{DATA}/{NS}/loot_table/chests/{name}.json", {"type": "minecraft:chest", "pools": [pool]})
+
+table("ammo_cache", (2, 4), [entry("pistol_rounds", 10, 4, 16), entry("shotgun_shell", 8, 3, 10),
+      entry("rifle_rounds", 6, 4, 12, 1), entry("sniper_round", 2, 1, 4, 2), entry("laser_cell", 1, 1, 2, 3)], 4)
+table("armoury", (2, 4), [entry("pistol", 6, quality=1), entry("shotgun", 4, quality=1), entry("smg", 3, quality=2),
+      entry("rifle", 2, quality=2), entry("sniper_rifle", 1, quality=3), entry("grenade", 5, 1, 3), entry("molotov", 4, 1, 3),
+      entry("pistol_rounds", 8, 4, 16), entry("rifle_rounds", 5, 4, 12), entry("sentry", 1, quality=3)], 6)
+table("medical_cabinet", (1, 3), [entry("bandage", 10, 1, 4), entry("medkit", 3, quality=2),
+      entry("adrenaline_syringe", 3, quality=1), entry("antidote_syringe", 4)], 5)
+
 # ---- lang -----------------------------------------------------------------------------------
 names = {
     "pistol": "Pistol", "smg": "SMG", "shotgun": "Shotgun", "rifle": "Rifle", "sniper_rifle": "Sniper Rifle",
