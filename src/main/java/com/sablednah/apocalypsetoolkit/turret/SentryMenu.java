@@ -29,10 +29,10 @@ public class SentryMenu extends AbstractContainerMenu {
         this.container = container;
         this.data = data;
         this.pos = pos;
-        addSlot(new Slot(container, SentryBlockEntity.AMMO, 44, 35) {
+        addSlot(new Slot(container, SentryBlockEntity.AMMO, 26, 30) {
             @Override public boolean mayPlace(ItemStack stack) { return SentryBlockEntity.isAmmo(stack); }
         });
-        addSlot(new Slot(container, SentryBlockEntity.IRON, 116, 35) {
+        addSlot(new Slot(container, SentryBlockEntity.IRON, 134, 30) {
             @Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.IRON_INGOT); }
         });
         addStandardInventorySlots(inv, 8, 84);

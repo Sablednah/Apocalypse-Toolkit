@@ -27,21 +27,24 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A sentry turret: placed, it belongs to whoever placed it and guards the ground around it ({@link SentryBlockEntity}).
- * Right-click opens its screen (ammunition, repairs, what it shoots at). Its head turns to its target in quarter
- * turns ({@link #FACING}).
+ * Right-click opens its screen (ammunition, repairs, what it shoots at). Its head turns smoothly to its target
+ * ({@code SentryRenderer}); {@link #FACING} is only which way it first faces.
  */
 public class SentryBlock extends Block implements EntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    /** Never true in the world: it names the head's model, which {@code SentryRenderer} draws turned to its aim. */
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty HEAD =
+            net.minecraft.world.level.block.state.properties.BooleanProperty.create("head");
     private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 14, 13);
 
     public SentryBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HEAD, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, HEAD);
     }
 
     @Override
@@ -74,7 +77,8 @@ public class SentryBlock extends Block implements EntityBlock {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() || type != ModRegistry.SENTRY_BE.get() ? null
+        if (type != ModRegistry.SENTRY_BE.get()) return null;
+        return level.isClientSide() ? (BlockEntityTicker<T>) (BlockEntityTicker<SentryBlockEntity>) SentryBlockEntity::clientTick
                 : (BlockEntityTicker<T>) (BlockEntityTicker<SentryBlockEntity>) SentryBlockEntity::serverTick;
     }
 }

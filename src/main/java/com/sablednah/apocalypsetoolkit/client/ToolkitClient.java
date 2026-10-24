@@ -48,6 +48,7 @@ public final class ToolkitClient {
             e.registerEntityRenderer(ModRegistry.GRENADE_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.MOLOTOV_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.PIPE_BOMB_ENTITY.get(), ThrownItemRenderer::new);
+            e.registerBlockEntityRenderer(ModRegistry.SENTRY_BE.get(), SentryRenderer::new);
             e.registerEntityRenderer(ModRegistry.SMOKE_GRENADE_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.CHEMICAL_GRENADE_ENTITY.get(), ThrownItemRenderer::new);
         });

@@ -65,7 +65,17 @@ public final class Blasts {
             level.setBlock(p.pos(), Blocks.AIR.defaultBlockState(), 3);
         }
         level.explode(null, p.pos().getX() + 0.5, p.pos().getY() + 0.5, p.pos().getZ() + 0.5, POWER, Level.ExplosionInteraction.MOB);
+        // sympathetic detonation: any charge within SYMPATHY blocks goes too, whether or not the blast's rays found it
+        for (BlockPos q : BlockPos.betweenClosed(p.pos().offset(-SYMPATHY, -SYMPATHY, -SYMPATHY), p.pos().offset(SYMPATHY, SYMPATHY, SYMPATHY)))
+            if (isCharge(level, q)) {
+                BlockPos at = q.immutable();
+                level.setBlock(at, Blocks.AIR.defaultBlockState(), 3);
+                queue(level, at, 4 + level.getRandom().nextInt(4), null);
+            }
     }
+
+    /** How near another charge must be to go off with one. */
+    public static final int SYMPATHY = 3;
 
     /** Is a charge at {@code pos} already queued (the self-test)? */
     public static boolean queued(ServerLevel level, BlockPos pos) {

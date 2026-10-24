@@ -25,7 +25,7 @@ public class SentryScreen extends AbstractContainerScreen<SentryMenu> {
         super.init();
         modeButton = addRenderableWidget(Button.builder(menu.mode().label(),
                 b -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0))
-                .bounds(leftPos + 62, topPos + 56, 52, 16).build());
+                .bounds(leftPos + 53, topPos + 52, 70, 16).build());
     }
 
     @Override
@@ -38,11 +38,19 @@ public class SentryScreen extends AbstractContainerScreen<SentryMenu> {
     public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
         super.extractBackground(g, mouseX, mouseY, partial);
         g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
-        int x = leftPos + 62, y = topPos + 22, w = 52;
+        // labels over the two slots and the bar; the bar and its numbers between them
+        centred(g, Component.translatable("sentry.apocalypse_toolkit.ammo"), leftPos + 34, topPos + 19);
+        centred(g, Component.translatable("sentry.apocalypse_toolkit.condition"), leftPos + 88, topPos + 19);
+        centred(g, Component.translatable("sentry.apocalypse_toolkit.repair"), leftPos + 142, topPos + 19);
+        int w = 64, x = leftPos + 88 - w / 2, y = topPos + 31;
         g.fill(x - 1, y - 1, x + w + 1, y + 7, 0xFF1E1E22);
         int filled = Math.round((float) w * menu.health() / menu.maxHealth());
         int colour = menu.health() * 4 > menu.maxHealth() ? 0xFF5FB05F : 0xFFC04040;
         g.fill(x, y, x + filled, y + 6, colour);
-        g.text(font, Component.translatable("sentry.apocalypse_toolkit.wear", menu.health(), menu.maxHealth()), x, y + 10, 0xFF404040, false);
+        centred(g, Component.literal(menu.health() + "/" + menu.maxHealth()), leftPos + 88, topPos + 40);
+    }
+
+    private void centred(GuiGraphicsExtractor g, Component text, int cx, int y) {
+        g.text(font, text, cx - font.width(text) / 2, y, 0xFF404040, false);
     }
 }

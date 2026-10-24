@@ -1,5 +1,5 @@
 {
-  "credit": "Apocalypse Toolkit, tools/art/sentry.py; tweak in Blockbench",
+  "credit": "Apocalypse Toolkit, tools/art/sentry.py; tweak in Blockbench (base and head together, for the item)",
   "texture_size": [
     16,
     16

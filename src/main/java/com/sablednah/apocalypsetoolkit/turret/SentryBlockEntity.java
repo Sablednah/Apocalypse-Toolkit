@@ -63,6 +63,12 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
     private int health = MAX_WEAR, cooldown;
+    /** Degrees a tick the head turns (180 in about 0.6 s), and how near its aim must be to fire. */
+    public static final float TURN = 15F, ON_TARGET = 12F;
+    /** Where the head is pointing and where it is turning to, in degrees (0 = north, the model's way); the server
+     * sends the aim, and both sides turn the head towards it at the same speed. */
+    private float yaw, yawO, aim;
+    private int targetId = -1, ticks;
     private Mode mode = Mode.HOSTILES;
     private UUID owner;
     private String ownerName = "";
@@ -75,6 +81,26 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
 
     public SentryBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistry.SENTRY_BE.get(), pos, state);
+        yaw = yawO = aim = state.hasProperty(SentryBlock.FACING) ? 180F - state.getValue(SentryBlock.FACING).toYRot() : 0F;
+    }
+
+    /** The head's yaw this frame, between last tick and this one. */
+    public float yaw(float partial) {
+        return yawO + net.minecraft.util.Mth.wrapDegrees(yaw - yawO) * partial;
+    }
+
+    private void turn() {
+        yawO = yaw;
+        float d = net.minecraft.util.Mth.wrapDegrees(aim - yaw);
+        yaw += net.minecraft.util.Mth.clamp(d, -TURN, TURN);
+    }
+
+    /** The head's yaw now, and where it is turning to (the self-test). */
+    public float yaw() { return yaw; }
+    public float aim() { return aim; }
+
+    public static void clientTick(Level level, BlockPos pos, BlockState state, SentryBlockEntity be) {
+        be.turn();
     }
 
     void setOwner(Player p) {
@@ -91,19 +117,69 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
     public static void serverTick(Level level, BlockPos pos, BlockState state, SentryBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
         be.repair();
-        if (--be.cooldown > 0) return;
-        be.cooldown = RATE;
-        if (be.mode == Mode.OFF || be.health <= 0 || be.items.get(AMMO).isEmpty()) return;
+        be.ticks++;
+        if (be.ticks % 10 == 0) be.pullAmmo(server, pos);
+        be.turn();
+        if (be.cooldown > 0) be.cooldown--;
+        if (be.mode == Mode.OFF || be.health <= 0 || be.items.get(AMMO).isEmpty()) { be.targetId = -1; return; }
         Vec3 muzzle = Vec3.atCenterOf(pos).add(0, 0.5, 0);           // above its own model, so its sight starts clear
-        Optional<LivingEntity> target = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE),
-                        e -> be.wants(server, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE && be.sees(server, muzzle, e))
-                .stream().min(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle)));
-        if (target.isEmpty()) return;
-        LivingEntity t = target.get();
-        Direction face = Direction.getApproximateNearest(t.getX() - muzzle.x, 0, t.getZ() - muzzle.z);
-        if (face.getAxis().isHorizontal() && state.getValue(SentryBlock.FACING) != face)
-            server.setBlock(pos, state.setValue(SentryBlock.FACING, face), 2);
-        be.fire(server, muzzle, t);
+        LivingEntity t = server.getEntity(be.targetId) instanceof LivingEntity e && be.valid(server, muzzle, e) ? e : null;
+        if (t == null && be.ticks % 5 == 0) {
+            t = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE), e -> be.valid(server, muzzle, e))
+                    .stream().min(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle))).orElse(null);
+        }
+        be.targetId = t == null ? -1 : t.getId();
+        if (t == null) return;
+        float want = (float) Math.toDegrees(Math.atan2(-(t.getX() - muzzle.x), -(t.getZ() - muzzle.z)));
+        if (Math.abs(net.minecraft.util.Mth.wrapDegrees(want - be.aim)) > 2F) {
+            be.aim = want;
+            server.sendBlockUpdated(pos, state, state, 2);              // the client turns to it too
+        }
+        if (be.cooldown <= 0 && Math.abs(net.minecraft.util.Mth.wrapDegrees(want - be.yaw)) <= ON_TARGET) {
+            be.cooldown = RATE;
+            be.fire(server, muzzle, t);
+        }
+    }
+
+    private boolean valid(ServerLevel level, Vec3 muzzle, LivingEntity e) {
+        return wants(level, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE && sees(level, muzzle, e);
+    }
+
+    /** Tops up the ammunition slot from a container underneath (a chest, barrel, hopper, AE2 interface...). */
+    private void pullAmmo(ServerLevel level, BlockPos pos) {
+        ItemStack have = items.get(AMMO);
+        if (have.getCount() >= have.getMaxStackSize() && !have.isEmpty()) return;
+        var below = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK, pos.below(), Direction.UP);
+        if (below == null) return;
+        for (int i = 0; i < below.size(); i++) {
+            var res = below.getResource(i);
+            if (res.isEmpty()) continue;
+            ItemStack kind = res.toStack();
+            if (!isAmmo(kind) || (!have.isEmpty() && !ItemStack.isSameItemSameComponents(have, kind))) continue;
+            int room = kind.getMaxStackSize() - have.getCount();
+            try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                int got = below.extract(i, res, room, tx);
+                tx.commit();
+                if (got <= 0) continue;
+                if (have.isEmpty()) items.set(AMMO, res.toStack(got)); else have.grow(got);
+                setChanged();
+                return;
+            }
+        }
+    }
+
+    // ---- client sync: only the aim goes over the wire ----
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        tag.putFloat("aim", aim);
+        return tag;
     }
 
     private boolean wants(ServerLevel level, LivingEntity e) {
@@ -174,6 +250,7 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         mode = Mode.values()[Math.floorMod(input.getIntOr("mode", 1), 4)];
         owner = input.getString("owner").map(UUID::fromString).orElse(null);
         ownerName = input.getStringOr("owner_name", "");
+        aim = input.getFloatOr("aim", aim);
     }
 
     @Override
@@ -184,6 +261,7 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         output.putInt("mode", mode.ordinal());
         if (owner != null) output.putString("owner", owner.toString());
         output.putString("owner_name", ownerName);
+        output.putFloat("aim", aim);
     }
 
     // ---- Container ----------------------------------------------------------------------------

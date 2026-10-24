@@ -13,7 +13,9 @@ NS = "apocalypse_toolkit"
 A = os.path.join(RES, "assets", NS)
 D = os.path.join(RES, "data")
 
-# facing north: the barrel points to -Z
+# facing north: the barrel points to -Z. BASE stays put; HEAD is drawn by SentryRenderer, turned about the block's
+# centre to where it aims. The item shows both.
+BASE_N = 6   # the first six boxes are the base
 BOXES = [
     ((3, 0, 3), (13, 1, 13), guns.DARK),         # base plate
     ((7, 1, 7), (9, 8, 9), guns.METAL),          # post
@@ -52,7 +54,7 @@ def gui():
                 if i == 0 or j == 0: c = (55, 55, 55, 255)
                 if i == 17 or j == 17: c = (255, 255, 255, 255)
                 px[x + i, y + j] = c
-    slot(43, 34); slot(115, 34)
+    slot(25, 29); slot(133, 29)
     for r in range(3):
         for c in range(9): slot(7 + c * 18, 83 + r * 18)
     for c in range(9): slot(7 + c * 18, 141)
@@ -61,12 +63,17 @@ def gui():
 def main():
     guns.palette(42).save(os.path.join(A, "textures", "block", "sentry.png")) if os.path.isdir(os.path.join(A, "textures", "block")) \
         else (os.makedirs(os.path.join(A, "textures", "block")), guns.palette(42).save(os.path.join(A, "textures", "block", "sentry.png")))
-    elements = [{"from": list(a), "to": list(b),
+    el = lambda boxes: [{"from": list(a), "to": list(b),
                  "faces": {f: {"uv": guns.swatch_uv(s), "texture": "#sentry"} for f in ("north", "east", "south", "west", "up", "down")}}
-                for a, b, s in BOXES]
+                for a, b, s in boxes]
+    tex = {"sentry": f"{NS}:block/sentry", "particle": f"{NS}:block/sentry"}
+    credit = "Apocalypse Toolkit, tools/art/sentry.py; tweak in Blockbench"
+    write(os.path.join(A, "models", "block", "sentry_base.json"),
+          {"credit": credit, "texture_size": [16, 16], "textures": tex, "elements": el(BOXES[:BASE_N])})
+    write(os.path.join(A, "models", "block", "sentry_head.json"),
+          {"credit": credit + " (the turning head, barrel to -Z)", "texture_size": [16, 16], "textures": tex, "elements": el(BOXES[BASE_N:])})
     write(os.path.join(A, "models", "block", "sentry.json"),
-          {"credit": "Apocalypse Toolkit, tools/art/sentry.py; tweak in Blockbench", "texture_size": [16, 16],
-           "textures": {"sentry": f"{NS}:block/sentry", "particle": f"{NS}:block/sentry"}, "elements": elements,
+          {"credit": credit + " (base and head together, for the item)", "texture_size": [16, 16], "textures": tex, "elements": el(BOXES),
            "display": {"gui": {"rotation": [30, 225, 0], "scale": [0.625, 0.625, 0.625]},
                        "ground": {"translation": [0, 3, 0], "scale": [0.25, 0.25, 0.25]},
                        "fixed": {"scale": [0.5, 0.5, 0.5]},
@@ -74,8 +81,7 @@ def main():
                        "firstperson_righthand": {"rotation": [0, 45, 0], "scale": [0.4, 0.4, 0.4]},
                        "firstperson_lefthand": {"rotation": [0, 225, 0], "scale": [0.4, 0.4, 0.4]}}})
     write(os.path.join(A, "blockstates", "sentry.json"), {"variants": {
-        f"facing={f}": {"model": f"{NS}:block/sentry", **({"y": y} if y else {})}
-        for f, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})
+        "head=false": {"model": f"{NS}:block/sentry_base"}, "head=true": {"model": f"{NS}:block/sentry_head"}}})
     write(os.path.join(A, "items", "sentry.json"), {"model": {"type": "minecraft:model", "model": f"{NS}:block/sentry"}})
     write(os.path.join(D, NS, "loot_table", "blocks", "sentry.json"), {"type": "minecraft:block", "pools": [
         {"rolls": 1, "entries": [{"type": "minecraft:item", "name": f"{NS}:sentry"}],

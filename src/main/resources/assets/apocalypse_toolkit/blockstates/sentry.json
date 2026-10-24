@@ -1,19 +1,10 @@
 {
   "variants": {
-    "facing=north": {
-      "model": "apocalypse_toolkit:block/sentry"
+    "head=false": {
+      "model": "apocalypse_toolkit:block/sentry_base"
     },
-    "facing=east": {
-      "model": "apocalypse_toolkit:block/sentry",
-      "y": 90
-    },
-    "facing=south": {
-      "model": "apocalypse_toolkit:block/sentry",
-      "y": 180
-    },
-    "facing=west": {
-      "model": "apocalypse_toolkit:block/sentry",
-      "y": 270
+    "head=true": {
+      "model": "apocalypse_toolkit:block/sentry_head"
     }
   }
 }

@@ -213,12 +213,20 @@ public final class SelfTest {
             float b3 = prey.getHealth();
             if (level.getBlockEntity(turret) instanceof SentryBlockEntity be) {
                 be.setItem(SentryBlockEntity.AMMO, new ItemStack(ModRegistry.RIFLE_ROUNDS.get(), 10));
-                for (int i = 0; i < SentryBlockEntity.RATE * 2 + 2; i++)
+                for (int i = 0; i < SentryBlockEntity.RATE * 3; i++)
                     SentryBlockEntity.serverTick(level, turret, level.getBlockState(turret), be);
                 check("sentry shoots a hostile", prey.getHealth() < b3, b3 + " -> " + prey.getHealth());
                 check("sentry spends ammo", be.getItem(SentryBlockEntity.AMMO).getCount() < 10, "left " + be.getItem(SentryBlockEntity.AMMO).getCount());
-                check("sentry turns to face it", level.getBlockState(turret).getValue(com.sablednah.apocalypsetoolkit.turret.SentryBlock.FACING)
-                        == net.minecraft.core.Direction.EAST, "");
+                check("sentry turns to face it", Math.abs(net.minecraft.util.Mth.wrapDegrees(be.yaw() - (-90F))) <= SentryBlockEntity.ON_TARGET,
+                        "yaw " + be.yaw() + ", aim " + be.aim());
+                // pulls ammo from a chest underneath
+                be.setItem(SentryBlockEntity.AMMO, ItemStack.EMPTY);
+                level.setBlockAndUpdate(turret.below(), Blocks.CHEST.defaultBlockState());
+                if (level.getBlockEntity(turret.below()) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest)
+                    chest.setItem(3, new ItemStack(ModRegistry.PISTOL_ROUNDS.get(), 40));
+                for (int i = 0; i < 10; i++) SentryBlockEntity.serverTick(level, turret, level.getBlockState(turret), be);
+                check("sentry pulls ammo from a chest below", be.getItem(SentryBlockEntity.AMMO).is(ModRegistry.PISTOL_ROUNDS.get()),
+                        be.getItem(SentryBlockEntity.AMMO).toString());
             } else {
                 check("sentry block entity", false, "missing");
             }
