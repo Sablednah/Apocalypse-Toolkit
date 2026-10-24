@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:plaster",
+    "count": 2
+  }
+}

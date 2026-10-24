@@ -23,4 +23,6 @@ First build (2026-10-24, overnight).
 - Guns reload from backpacks and other container items (NeoForge's item capability), and from Curios slots.
 - Cooking: fused throwables start their fuse when you press use and fly on release with what's left; too long and
   they go off at your feet.
-- Self-test: `./gradlew runServer -Pselftest`, 52 checks (put Sophisticated Backpacks in run/mods to test it too).
+- From Threadwork: the crowbar's sprite, lore and stone-pickaxe-and-axe mining; the Plaster (instant 2-heart heal).
+- The crowbar, lead pipe, shiv and hunting bow are enchantable.
+- Self-test: `./gradlew runServer -Pselftest`, 55 checks (put Sophisticated Backpacks in run/mods to test it too).

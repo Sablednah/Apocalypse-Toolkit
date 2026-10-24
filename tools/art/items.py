@@ -175,8 +175,14 @@ def write(path, obj):
     with open(path, "w") as f:
         json.dump(obj, f, indent=2); f.write("\n")
 
+HAND_DRAWN = {"plaster"}   # Threadwork's plaster sprite, moved over 2026-10-24: models only
+
 def main():
     os.makedirs(os.path.join(RES, "textures", "item"), exist_ok=True)
+    for name in HAND_DRAWN:
+        write(os.path.join(RES, "models", "item", name + ".json"),
+              {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}})
+        write(os.path.join(RES, "items", name + ".json"), {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
     for name, draw in SPRITES.items():
         draw().save(os.path.join(RES, "textures", "item", name + ".png"))
         write(os.path.join(RES, "models", "item", name + ".json"),

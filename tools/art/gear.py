@@ -8,6 +8,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 RES = os.path.join(HERE, "..", "..", "src", "main", "resources", "assets", "apocalypse_toolkit")
 NS = "apocalypse_toolkit"
 OUTLINE = (24, 22, 22, 255)
+# sprites drawn by hand, not by this script: the crowbar is Threadwork's (moved over 2026-10-24)
+HAND_DRAWN = {"crowbar"}
 
 def canvas():
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
@@ -99,7 +101,7 @@ def write(path, obj):
 def main():
     tex = os.path.join(RES, "textures", "item")
     for name, draw in (("crowbar", crowbar), ("lead_pipe", lead_pipe), ("shiv", shiv)):
-        draw().save(os.path.join(tex, name + ".png"))
+        if name not in HAND_DRAWN: draw().save(os.path.join(tex, name + ".png"))
         write(os.path.join(RES, "models", "item", name + ".json"),
               {"parent": "minecraft:item/handheld", "textures": {"layer0": f"{NS}:item/{name}"}})
         write(os.path.join(RES, "items", name + ".json"), {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})

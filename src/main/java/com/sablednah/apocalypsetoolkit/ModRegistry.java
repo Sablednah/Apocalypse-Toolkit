@@ -169,10 +169,19 @@ public final class ModRegistry {
 
     // ---- medical ------------------------------------------------------------------------------
 
+    public static final DeferredItem<com.sablednah.apocalypsetoolkit.medical.PlasterItem> PLASTER = ITEMS.registerItem("plaster",
+            com.sablednah.apocalypsetoolkit.medical.PlasterItem::new, p -> p.stacksTo(16).component(net.minecraft.core.component.DataComponents.LORE,
+                    lore("item.apocalypse_toolkit.plaster.lore")));
+    static { ORDER.add(PLASTER); }
     public static final DeferredItem<Item> BANDAGE = item("bandage", Medical::bandage);
     public static final DeferredItem<Item> MEDKIT = item("medkit", Medical::medkit);
     public static final DeferredItem<Item> ADRENALINE = item("adrenaline_syringe", Medical::adrenaline);
     public static final DeferredItem<Item> ANTIDOTE = item("antidote_syringe", Medical::antidote);
+
+    private static net.minecraft.world.item.component.ItemLore lore(String key) {
+        return new net.minecraft.world.item.component.ItemLore(java.util.List.of(Component.translatable(key)
+                .withStyle(net.minecraft.ChatFormatting.GRAY, net.minecraft.ChatFormatting.ITALIC)));
+    }
 
     private static DeferredItem<Item> item(String name, java.util.function.UnaryOperator<Item.Properties> props) {
         DeferredItem<Item> it = ITEMS.registerSimpleItem(name, props);
@@ -190,7 +199,22 @@ public final class ModRegistry {
     public static final net.minecraft.world.item.ToolMaterial SCRAP_IRON = new net.minecraft.world.item.ToolMaterial(
             net.minecraft.tags.BlockTags.INCORRECT_FOR_IRON_TOOL, 250, 9.0F, 2.0F, 10, IRON_REPAIR);
 
-    public static final DeferredItem<Item> CROWBAR = item("crowbar", p -> p.tool(SCRAP_IRON, CROWBAR_MINEABLE, 3.0F, -2.4F, 0F));
+    /**
+     * The crowbar: hits like an iron sword (6, 1.6 a second), opens containers fast, and mines like a stone pickaxe and
+     * axe together (Threadwork's crowbar, moved over). Not in the sword/axe/pickaxe tags, so LegendQuest lets every
+     * class swing it; enchantable through the enchantable tags instead.
+     */
+    public static final DeferredItem<Item> CROWBAR = item("crowbar", p -> {
+        var blocks = net.minecraft.core.registries.BuiltInRegistries.acquireBootstrapRegistrationLookup(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        return p.sword(SCRAP_IRON, 3.0F, -2.4F)
+                .component(net.minecraft.core.component.DataComponents.TOOL, new net.minecraft.world.item.component.Tool(java.util.List.of(
+                        net.minecraft.world.item.component.Tool.Rule.deniesDrops(blocks.getOrThrow(net.minecraft.tags.BlockTags.INCORRECT_FOR_STONE_TOOL)),
+                        net.minecraft.world.item.component.Tool.Rule.minesAndDrops(blocks.getOrThrow(CROWBAR_MINEABLE), 9.0F),
+                        net.minecraft.world.item.component.Tool.Rule.minesAndDrops(blocks.getOrThrow(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE), 4.0F),
+                        net.minecraft.world.item.component.Tool.Rule.minesAndDrops(blocks.getOrThrow(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE), 4.0F)),
+                        1.0F, 1, false))
+                .component(net.minecraft.core.component.DataComponents.LORE, lore("item.apocalypse_toolkit.crowbar.lore"));
+    });
     public static final DeferredItem<Item> LEAD_PIPE = item("lead_pipe", p -> p.sword(SCRAP_IRON, 2.5F, -2.9F).durability(300));
     public static final DeferredItem<Item> SHIV = item("shiv", p -> p.sword(SCRAP_IRON, -0.5F, -1.6F).durability(120));
     public static final DeferredItem<com.sablednah.apocalypsetoolkit.gear.HuntingBowItem> HUNTING_BOW = ITEMS.registerItem("hunting_bow",

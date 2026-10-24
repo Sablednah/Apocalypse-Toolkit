@@ -85,7 +85,7 @@ public final class SelfTest {
             var bullet = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(GunItem.BULLET);
             check("bullet damage is projectile damage", bullet.is(DamageTypeTags.IS_PROJECTILE), "");
             for (String r : new String[] { "pistol", "shotgun", "sniper_rifle", "pistol_rounds", "grenade", "medkit", "sentry", "sprung", "crowbar",
-                    "hunting_bow", "pipe_bomb", "smoke_grenade", "chemical_grenade", "c4", "detonator", "barbed_wire", "spikes" })
+                    "hunting_bow", "pipe_bomb", "smoke_grenade", "chemical_grenade", "c4", "detonator", "barbed_wire", "spikes", "plaster" })
                 check("recipe " + r, server.getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE,
                         Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, r))).isPresent(), "");
             ItemStack crowbar = new ItemStack(ModRegistry.CROWBAR.get());
@@ -101,6 +101,14 @@ public final class SelfTest {
                             .create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.CHEST)).size();
                 check("loot table " + t + " rolls items", lt != net.minecraft.world.level.storage.loot.LootTable.EMPTY && items > 0, items + " stacks in 20 rolls");
             }
+            check("crowbar mines stone like a stone pickaxe", crowbar.getDestroySpeed(Blocks.STONE.defaultBlockState()) == 4F
+                    && crowbar.isCorrectToolForDrops(Blocks.STONE.defaultBlockState()) && !crowbar.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),
+                    "speed " + crowbar.getDestroySpeed(Blocks.STONE.defaultBlockState()));
+            fake.setHealth(10F);
+            fake.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModRegistry.PLASTER.get(), 2));
+            ModRegistry.PLASTER.get().use(level, fake, InteractionHand.MAIN_HAND);
+            check("plaster heals two hearts", fake.getHealth() == 14F && fake.getMainHandItem().getCount() == 1, "health " + fake.getHealth());
+            fake.setHealth(fake.getMaxHealth());
             check("medkit is consumable", new ItemStack(ModRegistry.MEDKIT.get()).has(DataComponents.CONSUMABLE), "");
 
             // ---- firing ----

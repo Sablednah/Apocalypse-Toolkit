@@ -16,7 +16,7 @@ def w(path, obj):
 GUNS = ["pistol", "smg", "shotgun", "rifle", "sniper_rifle", "laser_rifle"]
 AMMO = ["pistol_rounds", "shotgun_shell", "rifle_rounds", "sniper_round", "laser_cell"]
 THROWN = ["grenade", "molotov", "pipe_bomb", "smoke_grenade", "chemical_grenade"]
-MEDICAL = ["bandage", "medkit", "adrenaline_syringe", "antidote_syringe"]
+MEDICAL = ["plaster", "bandage", "medkit", "adrenaline_syringe", "antidote_syringe"]
 ns = lambda n: f"{NS}:{n}"
 
 # ---- damage types ---------------------------------------------------------------------------
@@ -66,6 +66,7 @@ shapeless("detonator", [I, "minecraft:copper_ingot", "minecraft:redstone_torch",
 # defences: a use for scrap (a pack can swap the nuggets for its scrap)
 shaped("barbed_wire", ["N N", " N ", "N N"], {"N": "minecraft:iron_nugget"}, 3, "building")
 shaped("spikes", ["N N", "III"], {"N": "minecraft:iron_nugget", "I": I}, 2, "building")
+shapeless("plaster", ["minecraft:paper", "minecraft:string"], 2, "misc")
 shapeless("bandage", ["#minecraft:wool", "minecraft:string"], 3, "misc")
 shapeless("medkit", [ns("bandage"), ns("bandage"), "minecraft:glistering_melon_slice", "minecraft:leather"], 1, "misc")
 shapeless("adrenaline_syringe", ["minecraft:glass_bottle", "minecraft:sugar", "minecraft:sugar", "minecraft:iron_nugget"], 1, "misc")
@@ -81,6 +82,13 @@ w(f"{DATA}/{NS}/tags/block/crowbar_mineable.json", {"values": [
     {"id": "#c:chests", "required": False}, {"id": "#c:barrels", "required": False}]})
 w(f"{DATA}/legendquest/tags/item/finesse.json", {"replace": False, "values": [{"id": ns("shiv"), "required": False}]})
 w(f"{DATA}/{NS}/tags/item/melee.json", {"values": [ns("crowbar"), ns("lead_pipe"), ns("shiv")]})
+# vanilla enchanting is by tag: the melee kit and the bow join the ones that fit them
+for tag, items in {"melee_weapon": ["crowbar", "lead_pipe", "shiv"], "weapon": ["crowbar", "lead_pipe", "shiv"],
+                   "sharp_weapon": ["crowbar", "lead_pipe", "shiv"], "fire_aspect": ["crowbar", "lead_pipe", "shiv"],
+                   "mining": ["crowbar"], "mining_loot": ["crowbar"], "bow": ["hunting_bow"],
+                   "durability": ["crowbar", "lead_pipe", "shiv", "hunting_bow"],
+                   "vanishing": ["crowbar", "lead_pipe", "shiv", "hunting_bow"]}.items():
+    w(f"{DATA}/minecraft/tags/item/enchantable/{tag}.json", {"replace": False, "values": [ns(i) for i in items]})
 shaped("crowbar", ["  I", " I ", "I  "], {"I": I})
 shaped("lead_pipe", [" I", "I "], {"I": "minecraft:iron_block"})
 shaped("shiv", ["N", "S"], {"N": "minecraft:iron_nugget", "S": "minecraft:string"})
@@ -105,7 +113,7 @@ table("armoury", (2, 4), [entry("pistol", 6, quality=1), entry("shotgun", 4, qua
       entry("rifle", 2, quality=2), entry("sniper_rifle", 1, quality=3), entry("grenade", 5, 1, 3), entry("molotov", 4, 1, 3),
       entry("pipe_bomb", 3, 1, 2, 1), entry("smoke_grenade", 3, 1, 2), entry("chemical_grenade", 2, 1, 2, 1), entry("c4", 1, 1, 2, 3),
       entry("pistol_rounds", 8, 4, 16), entry("rifle_rounds", 5, 4, 12), entry("sentry", 1, quality=3)], 6)
-table("medical_cabinet", (1, 3), [entry("bandage", 10, 1, 4), entry("medkit", 3, quality=2),
+table("medical_cabinet", (1, 3), [entry("plaster", 10, 1, 4), entry("bandage", 8, 1, 4), entry("medkit", 3, quality=2),
       entry("adrenaline_syringe", 3, quality=1), entry("antidote_syringe", 4)], 5)
 
 # ---- lang -----------------------------------------------------------------------------------
@@ -115,7 +123,7 @@ names = {
     "rifle_rounds": "Rifle Rounds", "sniper_round": "Sniper Round", "laser_cell": "Laser Cell", "grenade": "Grenade",
     "molotov": "Molotov", "bandage": "Bandage", "medkit": "Medkit", "adrenaline_syringe": "Adrenaline Syringe",
     "antidote_syringe": "Antidote Syringe", "crowbar": "Crowbar", "lead_pipe": "Lead Pipe", "shiv": "Shiv",
-    "hunting_bow": "Hunting Bow", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
+    "hunting_bow": "Hunting Bow", "plaster": "Plaster", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
     "chemical_grenade": "Chemical Grenade", "detonator": "Detonator",
 }
 lang = {f"item.{NS}.{k}": v for k, v in names.items()}
@@ -132,6 +140,9 @@ lang.update({
     "tooltip.apocalypse_toolkit.sprung": "Sprung: swings shut behind you",
     "block.apocalypse_toolkit.c4": "C4 Charge", "block.apocalypse_toolkit.barbed_wire": "Barbed Wire",
     "block.apocalypse_toolkit.spikes": "Spikes",
+    "item.apocalypse_toolkit.plaster.lore": "Sticks to most things. Heals 2 hearts.",
+    "message.apocalypse_toolkit.not_hurt": "You're not hurt.",
+    "item.apocalypse_toolkit.crowbar.lore": "Theoretical physicist not included.",
     "message.apocalypse_toolkit.fuse": "Fuse: %s s (let go to throw)",
     "message.apocalypse_toolkit.fuse_hand": "Held it too long!",
     "message.apocalypse_toolkit.detonator.none": "No charges of yours within %s blocks.",

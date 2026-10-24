@@ -53,7 +53,7 @@ by hand, a charge drops safely.
 
 ## Medicine
 
-Bandage (Regeneration II, 5 s), Medkit (Instant Health II, Regeneration, cures poison, wither, hunger), Adrenaline
+Plaster (heals 2 hearts at once; refused at full health), Bandage (Regeneration II, 5 s), Medkit (Instant Health II, Regeneration, cures poison, wither, hunger), Adrenaline
 Syringe (Speed II and Strength for 30 s), Antidote Syringe (cures poison, wither, nausea, hunger, weakness).
 
 ## Sentry Turret
@@ -64,9 +64,9 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Improvised gear
 
-- **Crowbar**: a weapon that opens chests, barrels and crates fast (`#apocalypse_toolkit:crowbar_mineable`, plus
+- **Crowbar**: hits like an iron sword, mines like a stone pickaxe and axe together, and opens chests, barrels and crates fast (`#apocalypse_toolkit:crowbar_mineable`, plus
   anything in `#c:chests` / `#c:barrels`).
-- **Lead Pipe** (slow, heavy) and **Shiv** (fast, light).
+- **Lead Pipe** (slow, heavy) and **Shiv** (fast, light). All three, and the hunting bow, take vanilla enchantments.
 - **Hunting Bow**: arrows fly 25% faster, twice as true, and hit 40% harder.
 - **Sprung doors, trapdoors and gates**: craft any of them with an iron nugget; it swings shut a second after you
   go through, waits while someone stands in it, and leaves redstone-powered ones alone.
@@ -82,7 +82,7 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 52 checks of the mechanics
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 55 checks of the mechanics
 (firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 
