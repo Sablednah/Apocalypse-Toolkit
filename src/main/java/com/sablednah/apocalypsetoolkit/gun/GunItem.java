@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * A gun. Right-click fires (held, for an automatic); the magazine is the {@link ModRegistry#LOADED} component, shown
- * as the item's bar. An empty gun clicks and starts reloading if its ammunition is carried; the Reload key (B by
+ * as the item's bar. An empty gun clicks and starts reloading if its ammunition is carried; the Reload key (R by
  * default) reloads at any time. Sneaking steadies the aim (half the spread; a scoped gun zooms). A reload takes {@link GunSpec#reload()} ticks with the gun in hand
  * ({@link ModRegistry#RELOAD_UNTIL}); a shotgun loads a shell at a time and firing stops it. Shots are rays (no
  * projectile entity): each pellet traces blocks and entities out to {@link GunSpec#range()}, a hit at head height
