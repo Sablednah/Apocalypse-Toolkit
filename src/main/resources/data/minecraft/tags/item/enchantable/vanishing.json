@@ -2,8 +2,14 @@
   "replace": false,
   "values": [
     "apocalypse_toolkit:crowbar",
-    "apocalypse_toolkit:lead_pipe",
     "apocalypse_toolkit:shiv",
-    "apocalypse_toolkit:hunting_bow"
+    "apocalypse_toolkit:lead_pipe",
+    "apocalypse_toolkit:hunting_bow",
+    "apocalypse_toolkit:pistol",
+    "apocalypse_toolkit:smg",
+    "apocalypse_toolkit:shotgun",
+    "apocalypse_toolkit:rifle",
+    "apocalypse_toolkit:sniper_rifle",
+    "apocalypse_toolkit:laser_rifle"
   ]
 }

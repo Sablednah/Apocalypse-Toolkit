@@ -75,7 +75,9 @@
   "subtitles.apocalypse_toolkit.gun.shotgun": "Shotgun fires",
   "subtitles.apocalypse_toolkit.gun.smg": "SMG fires",
   "subtitles.apocalypse_toolkit.gun.sniper": "Sniper rifle fires",
+  "subtitles.apocalypse_toolkit.pipe_bomb.beep": "Pipe bomb beeps",
   "tooltip.apocalypse_toolkit.ammo": "Ammo: %s/%s (%s)",
+  "tooltip.apocalypse_toolkit.shiv_sharp": "Sharpness counts one level higher",
   "tooltip.apocalypse_toolkit.sprung": "Sprung: swings shut behind you",
   "tooltip.apocalypse_toolkit.stats": "Damage %s, range %s, %s shots a second",
   "tooltip.apocalypse_toolkit.zoom": "Sneak to aim through the scope"

@@ -25,7 +25,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -35,7 +34,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -137,30 +135,58 @@ public class GunItem extends Item {
         Vec3 muzzle = player.getEyePosition().add(player.getViewVector(1F).scale(0.9)).add(0, -0.15, 0);
         server.sendParticles(spec.laser() ? ParticleTypes.END_ROD : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
                 spec.laser() ? 1 : 3, 0.02, 0.02, 0.02, 0.01);
-        for (int i = 0; i < spec.pellets(); i++) ray(server, player, r);
+        int pierce = 1 + level(server, stack, net.minecraft.world.item.enchantment.Enchantments.PIERCING);
+        for (int i = 0; i < spec.pellets(); i++) ray(server, player, r, 0F, pierce);
+        if (level(server, stack, net.minecraft.world.item.enchantment.Enchantments.MULTISHOT) > 0) {
+            int extra = spec.pellets() > 1 ? 2 : 1;                  // two more shots, either side (a shotgun: two more pellets each)
+            for (int i = 0; i < extra; i++) { ray(server, player, r, -MULTISHOT_ANGLE, pierce); ray(server, player, r, MULTISHOT_ANGLE, pierce); }
+        }
     }
 
-    private void ray(ServerLevel level, Player player, RandomSource r) {
+    /** Crossbow enchantments on a gun: Quick Charge reloads faster, Multishot fires two more shots either side, Piercing
+     * goes through one more target a level. */
+    static final float MULTISHOT_ANGLE = 6F, QUICK_CHARGE = 0.2F;
+
+    private static int level(ServerLevel level, ItemStack stack, net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> key) {
+        return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(key), stack);
+    }
+
+    /** Ticks for one reload step, shortened by Quick Charge (a fifth a level, never under a quarter). */
+    private int reloadTicks(ServerLevel level, ItemStack stack) {
+        int qc = level(level, stack, net.minecraft.world.item.enchantment.Enchantments.QUICK_CHARGE);
+        return Math.max(Math.max(1, spec.reload() / 4), Math.round(spec.reload() * (1F - QUICK_CHARGE * qc)));
+    }
+
+    private void ray(ServerLevel level, Player player, RandomSource r, float yawOffset, int pierce) {
         boolean aimed = player.isShiftKeyDown();
         float spread = spec.zoom() < 1F && aimed ? 0F : spec.spread() * (aimed ? 0.5F : 1F);
-        float yaw = player.getYRot() + (r.nextFloat() - 0.5F) * 2F * spread;
+        float yaw = player.getYRot() + yawOffset + (r.nextFloat() - 0.5F) * 2F * spread;
         float pitch = Mth.clamp(player.getXRot() + (r.nextFloat() - 0.5F) * 2F * spread, -90F, 90F);
         Vec3 dir = Vec3.directionFromRotation(pitch, yaw);
         Vec3 eye = player.getEyePosition();
         Vec3 end = eye.add(dir.scale(spec.range()));
         BlockHitResult block = level.clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         Vec3 stop = block.getType() == HitResult.Type.MISS ? end : block.getLocation();
-        EntityHitResult hit = ProjectileUtil.getEntityHitResult(level, player, eye, stop, new AABB(eye, stop).inflate(1.0),
-                e -> e != player && !e.isSpectator() && e.isPickable() && e.isAlive(), 0.3F);
-        if (hit != null) {
-            stop = hit.getLocation();
-            Entity target = hit.getEntity();
-            float damage = spec.damage();
-            if (target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.15) damage *= spec.headshot();
-            target.invulnerableTime = 0;                       // every pellet of a shotgun blast counts
-            target.hurtServer(level, source(level, player), damage);
-            level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, stop.x, stop.y, stop.z, 2, 0.1, 0.1, 0.1, 0.05);
-        } else if (block.getType() != HitResult.Type.MISS) {
+        final Vec3 wall = stop;
+        // everything the shot passes through before the wall, nearest first; it stops in the pierce-th
+        java.util.List<java.util.Map.Entry<Entity, Vec3>> hits = new java.util.ArrayList<>();
+        for (Entity e : level.getEntities(player, new AABB(eye, wall).inflate(1.0), e -> !e.isSpectator() && e.isPickable() && e.isAlive()))
+            e.getBoundingBox().inflate(0.3).clip(eye, wall).ifPresent(at -> hits.add(java.util.Map.entry(e, at)));
+        hits.sort(java.util.Comparator.comparingDouble(h -> h.getValue().distanceToSqr(eye)));
+        if (!hits.isEmpty()) {
+            for (int i = 0; i < Math.min(pierce, hits.size()); i++) {
+                Entity target = hits.get(i).getKey();
+                stop = hits.get(i).getValue();
+                float damage = spec.damage();
+                if (target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.15) damage *= spec.headshot();
+                target.invulnerableTime = 0;                       // every pellet of a shotgun blast counts
+                target.hurtServer(level, source(level, player), damage);
+                level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, stop.x, stop.y, stop.z, 2, 0.1, 0.1, 0.1, 0.05);
+            }
+            if (pierce > hits.size()) stop = wall;                 // went through them all, on to the wall
+        }
+        if ((hits.isEmpty() || pierce > hits.size()) && block.getType() != HitResult.Type.MISS) {
             var state = level.getBlockState(block.getBlockPos());
             if (!state.isAir())
                 level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), stop.x, stop.y, stop.z, 5, 0.05, 0.05, 0.05, 0.1);
@@ -188,7 +214,7 @@ public class GunItem extends Item {
             player.sendOverlayMessage(Component.translatable("message.apocalypse_toolkit.no_ammo", new ItemStack(spec.ammo().get()).getHoverName()));
             return;
         }
-        stack.set(ModRegistry.RELOAD_UNTIL.get(), level.getGameTime() + spec.reload());
+        stack.set(ModRegistry.RELOAD_UNTIL.get(), level.getGameTime() + reloadTicks(level, stack));
         level.playSound(null, player.blockPosition(), ModRegistry.RELOAD_START.get(), SoundSource.PLAYERS, 0.9F, 1.0F);
     }
 
@@ -206,7 +232,7 @@ public class GunItem extends Item {
             stack.set(ModRegistry.LOADED.get(), loaded);
             level.playSound(null, player.blockPosition(), ModRegistry.SHELL_IN.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
             if (loaded < spec.magazine() && (player.isCreative() || count(player) > 0)) {
-                stack.set(ModRegistry.RELOAD_UNTIL.get(), level.getGameTime() + spec.reload());
+                stack.set(ModRegistry.RELOAD_UNTIL.get(), level.getGameTime() + reloadTicks(level, stack));
                 return;
             }
         } else {

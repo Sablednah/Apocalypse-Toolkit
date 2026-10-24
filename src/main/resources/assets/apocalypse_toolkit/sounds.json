@@ -112,5 +112,14 @@
         "attenuation_distance": 12
       }
     ]
+  },
+  "pipe_bomb.beep": {
+    "subtitle": "subtitles.apocalypse_toolkit.pipe_bomb.beep",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/beep",
+        "attenuation_distance": 24
+      }
+    ]
   }
 }

@@ -36,7 +36,7 @@ public class PipeBombEntity extends FusedThrowable {
     protected void burning(ServerLevel level, int tick) {
         int every = tick < 50 ? 12 : tick < 80 ? 6 : 3;
         if (tick % every == 0)
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1.2F, 1.8F);
+            level.playSound(null, getX(), getY(), getZ(), com.sablednah.apocalypsetoolkit.ModRegistry.BEEP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         if (tick % 20 == 0)
             for (Monster m : level.getEntitiesOfClass(Monster.class, new AABB(blockPosition()).inflate(LURE))) {
                 m.setTarget(null);

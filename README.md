@@ -10,7 +10,7 @@ into a pack.
 |---|---|---|---|---|---|---|
 | Pistol | 6 | 48 | 3.3/s | 12 | Pistol Rounds | |
 | SMG | 3.5 | 32 | 10/s | 30 | Pistol Rounds | automatic |
-| Shotgun | 8 x 3.5 | 20 | 1.1/s | 6 | Shotgun Shells | loads shell by shell; firing interrupts |
+| Shotgun | 8 x 2.5 | 16 | 1.1/s | 6 | Shotgun Shells | loads shell by shell; firing interrupts |
 | Rifle | 8 | 64 | 5/s | 20 | Rifle Rounds | automatic |
 | Sniper Rifle | 22 (x2 headshot) | 128 | 0.7/s | 5 | Sniper Rounds | sneak to look through the scope |
 | Laser Rifle | 12 | 96 | 2.5/s | 16 | Laser Cells | a beam, rare |
@@ -20,6 +20,8 @@ into a pack.
   backpack or container item that shares its contents (Sophisticated Backpacks, shulker boxes), carried or worn.
 - **Sneak** to steady your aim (half the spread).
 - A hit at head height does 1.5x damage (2x for the sniper). The bar under the gun shows rounds left.
+- Guns take crossbow enchantments: Quick Charge (reloads 20% faster a level), Multishot (two more shots either side),
+  Piercing (through one more target a level).
 - Guns hit instantly (no bullet entity). Damage is `apocalypse_toolkit:bullet` / `:laser`, both in
   `#minecraft:is_projectile`, so Projectile Protection and stat mods treat it as a shot.
 
@@ -66,7 +68,8 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 - **Crowbar**: hits like an iron sword, mines like a stone pickaxe and axe together, and opens chests, barrels and crates fast (`#apocalypse_toolkit:crowbar_mineable`, plus
   anything in `#c:chests` / `#c:barrels`).
-- **Lead Pipe** (slow, heavy) and **Shiv** (fast, light). All three, and the hunting bow, take vanilla enchantments.
+- **Lead Pipe** (slow, heavy) and **Shiv** (fast, light). Enchanting: the crowbar takes sword and pickaxe/shovel enchantments; the shiv a sword's (Sharpness counts one
+  level higher on it); the lead pipe a mace's (Density, Breach, Wind Burst); the hunting bow a bow's.
 - **Hunting Bow**: arrows fly 25% faster, twice as true, and hit 40% harder.
 - **Sprung doors, trapdoors and gates**: craft any of them with an iron nugget; it swings shut a second after you
   go through, waits while someone stands in it, and leaves redstone-powered ones alone.
@@ -82,7 +85,7 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 55 checks of the mechanics
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 60 checks of the mechanics
 (firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 

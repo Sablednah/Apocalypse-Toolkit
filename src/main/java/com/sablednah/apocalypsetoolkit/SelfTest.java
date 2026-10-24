@@ -111,6 +111,20 @@ public final class SelfTest {
             fake.setHealth(fake.getMaxHealth());
             check("medkit is consumable", new ItemStack(ModRegistry.MEDKIT.get()).has(DataComponents.CONSUMABLE), "");
 
+            // ---- enchanting ----
+            var ench = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            ItemStack shiv = new ItemStack(ModRegistry.SHIV.get());
+            shiv.enchant(ench.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS), 5);
+            int sharp = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+                    ench.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS), shiv);
+            check("shiv: Sharpness V counts as VI", sharp == 6, "level " + sharp);
+            java.util.function.BiPredicate<net.minecraft.world.item.Item, String> in = (it, tag) -> new ItemStack(it).is(
+                    net.minecraft.tags.TagKey.create(Registries.ITEM, Identifier.withDefaultNamespace("enchantable/" + tag)));
+            check("enchanting tags", in.test(ModRegistry.CROWBAR.get(), "mining") && in.test(ModRegistry.CROWBAR.get(), "sharp_weapon")
+                    && in.test(ModRegistry.SHIV.get(), "sweeping") && in.test(ModRegistry.LEAD_PIPE.get(), "mace")
+                    && !in.test(ModRegistry.LEAD_PIPE.get(), "sharp_weapon") && in.test(ModRegistry.RIFLE.get(), "crossbow")
+                    && in.test(ModRegistry.HUNTING_BOW.get(), "bow"), "");
+
             // ---- firing ----
             Monster target = husk(level, base.offset(6, 0, 0));
             fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);   // facing east, at the husk
@@ -121,6 +135,30 @@ public final class SelfTest {
             ModRegistry.PISTOL.get().use(level, fake, InteractionHand.MAIN_HAND);
             check("pistol shot hits", target.getHealth() < before, before + " -> " + target.getHealth());
             check("pistol spends a round", GunItem.loaded(fake.getMainHandItem()) == 11, "loaded " + GunItem.loaded(fake.getMainHandItem()));
+
+            // Piercing: one shot through two husks in a row
+            Monster near = husk(level, base.offset(3, 0, 0)), far = husk(level, base.offset(5, 0, 0));
+            target.discard();
+            float n0 = near.getHealth(), f0 = far.getHealth();
+            ItemStack piercer = new ItemStack(ModRegistry.PISTOL.get());
+            piercer.set(ModRegistry.LOADED.get(), 12);
+            piercer.enchant(ench.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.PIERCING), 1);
+            fake.setItemInHand(InteractionHand.MAIN_HAND, piercer);
+            fake.getCooldowns().removeCooldown(Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "pistol"));
+            ModRegistry.PISTOL.get().use(level, fake, InteractionHand.MAIN_HAND);
+            check("Piercing goes through to the second", near.getHealth() < n0 && far.getHealth() < f0, near.getHealth() + ", " + far.getHealth());
+            near.discard(); far.discard();
+            // Quick Charge III: a reload takes 40% of the time
+            ItemStack quick = new ItemStack(ModRegistry.PISTOL.get());
+            quick.set(ModRegistry.LOADED.get(), 0);
+            quick.enchant(ench.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.QUICK_CHARGE), 3);
+            fake.setItemInHand(InteractionHand.MAIN_HAND, quick);
+            fake.getInventory().setItem(9, new ItemStack(ModRegistry.PISTOL_ROUNDS.get(), 20));
+            ModRegistry.PISTOL.get().startReload(level, fake, quick);
+            long took = quick.getOrDefault(ModRegistry.RELOAD_UNTIL.get(), 0L) - level.getGameTime();
+            check("Quick Charge shortens a reload", took == Math.round(ModRegistry.PISTOL.get().spec().reload() * 0.4F), took + " ticks");
+            fake.getInventory().clearContent();
+            fake.setItemInHand(InteractionHand.MAIN_HAND, pistol);
 
             // ---- reloading ----
             pistol.set(ModRegistry.LOADED.get(), 0);

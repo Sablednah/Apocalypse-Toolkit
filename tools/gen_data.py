@@ -82,12 +82,19 @@ w(f"{DATA}/{NS}/tags/block/crowbar_mineable.json", {"values": [
     {"id": "#c:chests", "required": False}, {"id": "#c:barrels", "required": False}]})
 w(f"{DATA}/legendquest/tags/item/finesse.json", {"replace": False, "values": [{"id": ns("shiv"), "required": False}]})
 w(f"{DATA}/{NS}/tags/item/melee.json", {"values": [ns("crowbar"), ns("lead_pipe"), ns("shiv")]})
-# vanilla enchanting is by tag: the melee kit and the bow join the ones that fit them
-for tag, items in {"melee_weapon": ["crowbar", "lead_pipe", "shiv"], "weapon": ["crowbar", "lead_pipe", "shiv"],
-                   "sharp_weapon": ["crowbar", "lead_pipe", "shiv"], "fire_aspect": ["crowbar", "lead_pipe", "shiv"],
-                   "mining": ["crowbar"], "mining_loot": ["crowbar"], "bow": ["hunting_bow"],
-                   "durability": ["crowbar", "lead_pipe", "shiv", "hunting_bow"],
-                   "vanishing": ["crowbar", "lead_pipe", "shiv", "hunting_bow"]}.items():
+# vanilla enchanting is by tag. Crowbar: sword and pickaxe/shovel enchantments. Shiv: a sword's (and Sharpness counts a
+# level higher on it, in code). Lead pipe: a mace's. Guns: a crossbow's (Quick Charge, Multishot, Piercing; read in
+# GunItem). Hunting bow: a bow's.
+MELEE_SWORD = ["crowbar", "shiv"]
+ENCHANTABLE = {
+    "sharp_weapon": MELEE_SWORD, "melee_weapon": MELEE_SWORD, "sweeping": MELEE_SWORD,
+    "weapon": MELEE_SWORD + ["lead_pipe"], "fire_aspect": MELEE_SWORD + ["lead_pipe"], "mace": ["lead_pipe"],
+    "mining": ["crowbar"], "mining_loot": ["crowbar"],
+    "crossbow": GUNS, "bow": ["hunting_bow"],
+    "durability": MELEE_SWORD + ["lead_pipe", "hunting_bow"],
+    "vanishing": MELEE_SWORD + ["lead_pipe", "hunting_bow"] + GUNS,
+}
+for tag, items in ENCHANTABLE.items():
     w(f"{DATA}/minecraft/tags/item/enchantable/{tag}.json", {"replace": False, "values": [ns(i) for i in items]})
 shaped("crowbar", ["  I", " I ", "I  "], {"I": I})
 shaped("lead_pipe", [" I", "I "], {"I": "minecraft:iron_block"})
@@ -137,6 +144,7 @@ lang.update({
     "tooltip.apocalypse_toolkit.ammo": "Ammo: %s/%s (%s)",
     "tooltip.apocalypse_toolkit.stats": "Damage %s, range %s, %s shots a second",
     "tooltip.apocalypse_toolkit.zoom": "Sneak to aim through the scope",
+    "tooltip.apocalypse_toolkit.shiv_sharp": "Sharpness counts one level higher",
     "tooltip.apocalypse_toolkit.sprung": "Sprung: swings shut behind you",
     "block.apocalypse_toolkit.c4": "C4 Charge", "block.apocalypse_toolkit.barbed_wire": "Barbed Wire",
     "block.apocalypse_toolkit.spikes": "Spikes",
@@ -166,7 +174,7 @@ lang.update({
 for s, text in {"gun.pistol": "Pistol fires", "gun.smg": "SMG fires", "gun.shotgun": "Shotgun fires",
                 "gun.rifle": "Rifle fires", "gun.sniper": "Sniper rifle fires", "gun.laser": "Laser fires",
                 "gun.empty": "Gun clicks empty", "gun.reload_start": "Magazine out", "gun.reload_end": "Magazine in",
-                "gun.shell_in": "Shell loaded"}.items():
+                "gun.shell_in": "Shell loaded", "pipe_bomb.beep": "Pipe bomb beeps"}.items():
     lang[f"subtitles.{NS}.{s}"] = text
 w(f"{ASSETS}/lang/en_us.json", dict(sorted(lang.items())))
 
@@ -178,6 +186,7 @@ SOUNDS = {
     "gun.sniper": (["gun/sniper1", "gun/sniper2"], 96), "gun.laser": (["gun/laser1", "gun/laser2"], 32),
     "gun.empty": (["gun/empty"], 12), "gun.reload_start": (["gun/reload_start"], 12),
     "gun.reload_end": (["gun/reload_end"], 12), "gun.shell_in": (["gun/shell_in"], 12),
+    "pipe_bomb.beep": (["gun/beep"], 24),
 }
 w(f"{ASSETS}/sounds.json", {e: {"subtitle": f"subtitles.{NS}.{e}",
                                 "sounds": [{"name": f"{NS}:{f}", "attenuation_distance": d} for f in files]}

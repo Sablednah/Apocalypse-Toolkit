@@ -79,6 +79,14 @@ def slide(seed, length=0.12, cut=1800):
     n = int(SR * length)
     return lowpass(highpass(rnd.standard_normal(n), 400), cut) * env(n, 0.02, length / 2.5) * 0.5
 
+def beep(freq=2600, length=0.075):
+    """An electronic beep: a soft-edged square wave, rounded off so it isn't harsh (a timer, not a bell)."""
+    n = int(SR * length); tt = np.arange(n) / SR
+    sq = np.sign(np.sin(2 * np.pi * freq * tt)) * 0.6 + np.sin(2 * np.pi * freq * tt) * 0.4
+    edge = int(SR * 0.004)
+    e = np.ones(n); e[:edge] = np.linspace(0, 1, edge); e[-edge:] = np.linspace(1, 0, edge)
+    return norm(lowpass(sq * e, 7000), 0.7)
+
 def write(name, x):
     os.makedirs(OUT, exist_ok=True)
     sf.write(os.path.join(OUT, name + ".ogg"), x.astype(np.float32), SR, format="OGG", subtype="VORBIS")
@@ -101,6 +109,7 @@ def main():
     write("reload_start", place(0.45, (0.0, click(2, 2600, 0.008)), (0.05, slide(3, 0.14)), (0.22, click(4, 1800, 0.012, gain=0.8))))
     write("reload_end", place(0.5, (0.0, slide(5, 0.1, 2200)), (0.12, click(6, 2400, 0.01)), (0.3, click(7, 3000, 0.008)), (0.34, slide(8, 0.08, 2600))))
     write("shell_in", place(0.25, (0.0, slide(9, 0.06, 1500)), (0.06, click(10, 1500, 0.015, gain=0.9))))
+    write("beep", place(0.12, (0.0, beep())))
     print("sounds written")
 
 if __name__ == "__main__":

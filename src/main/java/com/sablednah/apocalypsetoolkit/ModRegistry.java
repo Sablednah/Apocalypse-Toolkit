@@ -71,6 +71,7 @@ public final class ModRegistry {
     public static final DeferredHolder<SoundEvent, SoundEvent> RELOAD_START = sound("gun.reload_start");
     public static final DeferredHolder<SoundEvent, SoundEvent> RELOAD_END = sound("gun.reload_end");
     public static final DeferredHolder<SoundEvent, SoundEvent> SHELL_IN = sound("gun.shell_in");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BEEP = sound("pipe_bomb.beep");
 
     private static DeferredHolder<SoundEvent, SoundEvent> sound(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(ID, name)));
@@ -93,7 +94,7 @@ public final class ModRegistry {
             .damage(3.5F).range(32).cooldown(2).magazine(30).reload(40).ammo(PISTOL_ROUNDS).spread(4F).recoil(1.2F)
             .automatic().sound(SMG_SHOT).build(), Rarity.UNCOMMON);
     public static final DeferredItem<GunItem> SHOTGUN = gun("shotgun", GunSpec.builder()
-            .damage(3.5F).pellets(8).range(20).cooldown(18).magazine(6).reload(12).perRoundReload().ammo(SHOTGUN_SHELL)
+            .damage(2.5F).pellets(8).range(16).cooldown(18).magazine(6).reload(12).perRoundReload().ammo(SHOTGUN_SHELL)
             .spread(9F).recoil(7F).sound(SHOTGUN_SHOT).build(), Rarity.COMMON);
     public static final DeferredItem<GunItem> RIFLE = gun("rifle", GunSpec.builder()
             .damage(8F).range(64).cooldown(4).magazine(20).reload(45).ammo(RIFLE_ROUNDS).spread(1F).recoil(2F)
@@ -106,7 +107,7 @@ public final class ModRegistry {
             .laser().sound(LASER_SHOT).build(), Rarity.EPIC);
 
     private static DeferredItem<GunItem> gun(String name, GunSpec spec, Rarity rarity) {
-        DeferredItem<GunItem> it = ITEMS.registerItem(name, p -> new GunItem(p, spec), p -> p.stacksTo(1).rarity(rarity));
+        DeferredItem<GunItem> it = ITEMS.registerItem(name, p -> new GunItem(p, spec), p -> p.stacksTo(1).rarity(rarity).enchantable(10));
         ORDER.add(it);
         return it;
     }
@@ -216,7 +217,8 @@ public final class ModRegistry {
                 .component(net.minecraft.core.component.DataComponents.LORE, lore("item.apocalypse_toolkit.crowbar.lore"));
     });
     public static final DeferredItem<Item> LEAD_PIPE = item("lead_pipe", p -> p.sword(SCRAP_IRON, 2.5F, -2.9F).durability(300));
-    public static final DeferredItem<Item> SHIV = item("shiv", p -> p.sword(SCRAP_IRON, -0.5F, -1.6F).durability(120));
+    public static final DeferredItem<Item> SHIV = item("shiv", p -> p.sword(SCRAP_IRON, -0.5F, -1.6F).durability(120)
+            .component(net.minecraft.core.component.DataComponents.LORE, lore("tooltip.apocalypse_toolkit.shiv_sharp")));
     public static final DeferredItem<com.sablednah.apocalypsetoolkit.gear.HuntingBowItem> HUNTING_BOW = ITEMS.registerItem("hunting_bow",
             com.sablednah.apocalypsetoolkit.gear.HuntingBowItem::new, p -> p.durability(500).enchantable(1));
     static { ORDER.add(HUNTING_BOW); }

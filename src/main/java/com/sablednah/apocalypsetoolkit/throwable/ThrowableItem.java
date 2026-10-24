@@ -75,7 +75,7 @@ public class ThrowableItem extends Item {
         if (kind == Kind.PIPE_BOMB) {
             int every = held < 50 ? 12 : held < 80 ? 6 : 3;
             if (held % every == 0)
-                server.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1.2F, 1.8F);
+                server.playSound(null, player.getX(), player.getY(), player.getZ(), com.sablednah.apocalypsetoolkit.ModRegistry.BEEP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         } else if (held % 20 == 0) {
             server.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TRIPWIRE_CLICK_OFF, SoundSource.PLAYERS, 0.5F, 2.0F);
         }

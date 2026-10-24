@@ -2,8 +2,8 @@
   "replace": false,
   "values": [
     "apocalypse_toolkit:crowbar",
-    "apocalypse_toolkit:lead_pipe",
     "apocalypse_toolkit:shiv",
+    "apocalypse_toolkit:lead_pipe",
     "apocalypse_toolkit:hunting_bow"
   ]
 }
