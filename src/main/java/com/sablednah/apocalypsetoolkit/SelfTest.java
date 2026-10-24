@@ -46,19 +46,21 @@ public final class SelfTest {
     private static final List<String> results = new ArrayList<>();
     private static int passed, failed;
     private static long started = -1;
-    private static Runnable later;
+    /** Checks that need time: run that many ticks after the start, then the test ends after the last. */
+    private static final java.util.TreeMap<Integer, List<Runnable>> later = new java.util.TreeMap<>();
+
+    private static void at(int tick, Runnable r) {
+        later.computeIfAbsent(tick, k -> new ArrayList<>()).add(r);
+    }
 
     public static void register() {
         if (!Boolean.getBoolean("apocalypse_toolkit.selftest")) return;
         NeoForge.EVENT_BUS.addListener((ServerStartedEvent e) -> run(e.getServer()));
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post e) -> {
-            if (started < 0 || later == null) return;
-            if (e.getServer().getTickCount() - started >= 90) {
-                Runnable r = later;
-                later = null;
-                r.run();
-                finish(e.getServer());
-            }
+            if (started < 0 || later.isEmpty()) return;
+            long t = e.getServer().getTickCount() - started;
+            while (!later.isEmpty() && later.firstKey() <= t) later.pollFirstEntry().getValue().forEach(Runnable::run);
+            if (later.isEmpty()) finish(e.getServer());
         });
     }
 
@@ -70,11 +72,11 @@ public final class SelfTest {
     private static void run(MinecraftServer server) {
         ServerLevel level = server.overworld();
         BlockPos base = new BlockPos(0, 220, 0);
-        for (int cx = -1; cx <= 2; cx++)                       // no player is online to keep the test ground loaded
+        for (int cx = -1; cx <= 6; cx++)                       // no player is online to keep the test ground loaded
             for (int cz = -1; cz <= 1; cz++) level.setChunkForced(cx, cz, true);
-        for (int x = -4; x <= 24; x++)
+        for (int x = -4; x <= 96; x++)
             for (int z = -4; z <= 8; z++) level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.STONE.defaultBlockState());
-        level.getEntities((net.minecraft.world.entity.Entity) null, new net.minecraft.world.phys.AABB(base).inflate(40),
+        level.getEntities((net.minecraft.world.entity.Entity) null, new net.minecraft.world.phys.AABB(base).inflate(110, 40, 40),
                 e -> !(e instanceof net.minecraft.world.entity.player.Player)).forEach(e -> e.discard());   // a previous run's leftovers
         FakePlayer fake = FakePlayerFactory.get(level, new GameProfile(UUID.nameUUIDFromBytes("ToolkitTest".getBytes()), "ToolkitTest"));
 
@@ -82,7 +84,8 @@ public final class SelfTest {
             // ---- data ----
             var bullet = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(GunItem.BULLET);
             check("bullet damage is projectile damage", bullet.is(DamageTypeTags.IS_PROJECTILE), "");
-            for (String r : new String[] { "pistol", "shotgun", "sniper_rifle", "pistol_rounds", "grenade", "medkit", "sentry", "sprung", "crowbar", "hunting_bow" })
+            for (String r : new String[] { "pistol", "shotgun", "sniper_rifle", "pistol_rounds", "grenade", "medkit", "sentry", "sprung", "crowbar",
+                    "hunting_bow", "pipe_bomb", "smoke_grenade", "chemical_grenade", "c4", "detonator", "barbed_wire", "spikes" })
                 check("recipe " + r, server.getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE,
                         Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, r))).isPresent(), "");
             ItemStack crowbar = new ItemStack(ModRegistry.CROWBAR.get());
@@ -164,17 +167,78 @@ public final class SelfTest {
             level.addFreshEntity(grenade);
             started = server.getTickCount();
             final long t0 = level.getGameTime(), due0 = Sprung.pendingAt(level, door);
-            later = () -> {
+            at(90, () -> {
                 var st = level.getBlockState(door);
                 check("sprung door shuts itself", st.hasProperty(BlockStateProperties.OPEN) && !st.getValue(BlockStateProperties.OPEN),
                         st + ", sprung " + Sprung.isSprung(level, door) + ", time " + t0 + "->" + level.getGameTime()
                                 + ", due " + due0 + "->" + Sprung.pendingAt(level, door));
                 check("grenade goes off", !grenade.isAlive(), "");
-            };
+            });
+
+            // ---- smoke and gas ----
+            Monster blinded = husk(level, base.offset(27, 0, 6));
+            blinded.setTarget(fake);
+            throwAt(level, new com.sablednah.apocalypsetoolkit.throwable.SmokeGrenadeEntity(level, fake, new ItemStack(ModRegistry.SMOKE_GRENADE.get())), base.offset(26, 0, 6));
+            Monster gassed = husk(level, base.offset(26, 0, -2));
+            float g0 = gassed.getHealth();
+            throwAt(level, new com.sablednah.apocalypsetoolkit.throwable.ChemicalGrenadeEntity(level, fake, new ItemStack(ModRegistry.CHEMICAL_GRENADE.get())), base.offset(26, 0, -2));
+            at(90, () -> {
+                check("smoke blinds", blinded.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "");
+                check("smoke loses a mob its target", blinded.getTarget() == null, "");
+                check("gas cloud hangs there", !level.getEntitiesOfClass(net.minecraft.world.entity.AreaEffectCloud.class,
+                        new net.minecraft.world.phys.AABB(base.offset(26, 0, -2)).inflate(3)).isEmpty(), "");
+                check("gas hurts the dead (wither)", gassed.getHealth() < g0, g0 + " -> " + gassed.getHealth());
+            });
+
+            // ---- barbed wire and spikes ----
+            BlockPos wire = base.offset(32, 0, 2);
+            level.setBlockAndUpdate(wire, ModRegistry.BARBED_WIRE.get().defaultBlockState());
+            Monster tangled = husk(level, wire);
+            float w0 = tangled.getHealth();
+            BlockPos spike = base.offset(35, -1, 2);
+            level.setBlockAndUpdate(spike, ModRegistry.SPIKES.get().defaultBlockState());
+            Monster impaled = husk(level, spike.above());
+            impaled.setNoAi(false);                              // stepOn wants a mob that moves, as a live one does
+            float s0 = impaled.getHealth();
+            at(60, () -> {
+                check("barbed wire cuts", tangled.getHealth() < w0, w0 + " -> " + tangled.getHealth());
+                check("spikes hurt", impaled.getHealth() < s0, s0 + " -> " + impaled.getHealth());
+            });
+
+            // ---- C4: two of ours, one of someone else's next to them (it should go too, in the chain) ----
+            BlockPos c1 = base.offset(52, 0, 0), c2 = base.offset(54, 0, 0), c3 = base.offset(56, 0, 0);
+            for (BlockPos c : new BlockPos[] { c1, c2, c3 }) level.setBlockAndUpdate(c, ModRegistry.C4.get().defaultBlockState());
+            ((com.sablednah.apocalypsetoolkit.explosive.C4BlockEntity) level.getBlockEntity(c1)).setOwner(fake.getUUID());
+            ((com.sablednah.apocalypsetoolkit.explosive.C4BlockEntity) level.getBlockEntity(c2)).setOwner(fake.getUUID());
+            ((com.sablednah.apocalypsetoolkit.explosive.C4BlockEntity) level.getBlockEntity(c3)).setOwner(UUID.randomUUID());
+            var mine = com.sablednah.apocalypsetoolkit.explosive.DetonatorItem.charges(level, fake);
+            check("detonator finds only your charges", mine.size() == 2 && mine.contains(c1) && mine.contains(c2), mine.toString());
+            fake.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModRegistry.DETONATOR.get()));
+            ModRegistry.DETONATOR.get().use(level, fake, InteractionHand.MAIN_HAND);
+            check("detonator arms them", com.sablednah.apocalypsetoolkit.explosive.Blasts.queued(level, c1)
+                    && com.sablednah.apocalypsetoolkit.explosive.Blasts.queued(level, c2), "");
+            at(40, () -> {
+                check("C4 goes off", !level.getBlockState(c1).is(ModRegistry.C4.get()) && !level.getBlockState(c2).is(ModRegistry.C4.get()), "");
+                check("a blast sets off the charge beside it", !level.getBlockState(c3).is(ModRegistry.C4.get()), "");
+            });
+
+            // ---- the pipe bomb, with a husk free to come to it ----
+            Monster lured = husk(level, base.offset(88, 0, 2));
+            lured.setNoAi(false);
+            var bomb = new com.sablednah.apocalypsetoolkit.throwable.PipeBombEntity(level, fake, new ItemStack(ModRegistry.PIPE_BOMB.get()));
+            throwAt(level, bomb, base.offset(72, 0, 2));
+            at(95, () -> check("pipe bomb draws the dead in", lured.distanceTo(bomb) < 12, "now " + lured.distanceTo(bomb)));
+            at(115, () -> check("pipe bomb goes off", !bomb.isAlive(), ""));
         } catch (Throwable t) {
             check("no exception", false, t.toString());
             finish(server);
         }
+    }
+
+    private static void throwAt(ServerLevel level, net.minecraft.world.entity.Entity thrown, BlockPos at) {
+        thrown.setPos(at.getX() + 0.5, at.getY() + 0.2, at.getZ() + 0.5);
+        thrown.setDeltaMovement(0, 0, 0);
+        level.addFreshEntity(thrown);
     }
 
     private static Monster husk(ServerLevel level, BlockPos at) {

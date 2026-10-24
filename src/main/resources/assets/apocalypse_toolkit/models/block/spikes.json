@@ -1,0 +1,280 @@
+{
+  "credit": "Apocalypse Toolkit, tools/art/defences.py; tweak in Blockbench",
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "top": "apocalypse_toolkit:block/spikes_top",
+    "side": "apocalypse_toolkit:block/spikes_side",
+    "bottom": "apocalypse_toolkit:block/spikes_bottom",
+    "particle": "apocalypse_toolkit:block/spikes_bottom"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        9,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#top"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#bottom",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        9,
+        2.5
+      ],
+      "to": [
+        16,
+        16,
+        2.5
+      ],
+      "shade": false,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        2.5,
+        9,
+        0
+      ],
+      "to": [
+        2.5,
+        16,
+        16
+      ],
+      "shade": false,
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        9,
+        7.5
+      ],
+      "to": [
+        16,
+        16,
+        7.5
+      ],
+      "shade": false,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        9,
+        0
+      ],
+      "to": [
+        7.5,
+        16,
+        16
+      ],
+      "shade": false,
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        9,
+        12.5
+      ],
+      "to": [
+        16,
+        16,
+        12.5
+      ],
+      "shade": false,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        12.5,
+        9,
+        0
+      ],
+      "to": [
+        12.5,
+        16,
+        16
+      ],
+      "shade": false,
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            7
+          ],
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:tnt",
+    "minecraft:clay_ball",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:c4",
+    "count": 2
+  }
+}

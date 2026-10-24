@@ -122,11 +122,52 @@ def syringe(fluid):
     px[13, 2] = px[14, 1] = (170, 174, 180, 255)          # needle
     return outline(im)
 
+def pipe_bomb():
+    im, px = canvas()
+    for i in range(9):                                    # a capped length of pipe, corner to corner
+        x, y = 3 + i, 12 - i
+        for d in (0, 1, 2):
+            c = (110, 114, 122) if d == 1 else (150, 154, 162) if d == 0 else (76, 78, 84)
+            if 0 <= y - 1 + d < 16: px[x, y - 1 + d] = c + (255,)
+    for x, y in [(2, 12), (3, 13), (2, 13), (11, 2), (12, 3), (12, 2)]: px[x, y] = (60, 62, 68, 255)   # end caps
+    for i in (3, 5): px[3 + i, 11 - i] = px[4 + i, 12 - i] = (60, 90, 170, 255)                         # duct tape
+    rect(px, 6, 8, 8, 9, (40, 40, 44)); px[7, 8] = (220, 40, 40, 255)                                   # the timer, lit
+    px[13, 1] = (200, 60, 50, 255); px[14, 1] = (200, 60, 50, 255); px[14, 0] = (60, 120, 200, 255)     # wires
+    return outline(im)
+
+def canister(body, band, top=(120, 124, 128)):
+    im, px = canvas()
+    rect(px, 5, 5, 10, 14, body); rect(px, 5, 5, 5, 14, tuple(min(255, v + 40) for v in body))
+    rect(px, 10, 5, 10, 14, tuple(max(0, v - 30) for v in body))
+    rect(px, 5, 8, 10, 9, band)
+    rect(px, 6, 3, 9, 4, top); rect(px, 9, 2, 12, 2, (150, 154, 160)); px[12, 3] = (150, 154, 160, 255)  # cap and lever
+    px[4, 3] = px[5, 2] = (196, 164, 80, 255)                                                            # the pin's ring
+    return im, px
+
+def smoke_grenade():
+    im, px = canister((92, 96, 102), (220, 220, 214))
+    for x, y in [(6, 11), (8, 12), (7, 13)]: px[x, y] = (200, 200, 196, 255)
+    return outline(im)
+
+def chemical_grenade():
+    im, px = canister((150, 160, 50), (30, 30, 30))
+    rect(px, 7, 11, 8, 12, (30, 30, 30)); px[6, 13] = px[9, 13] = (30, 30, 30, 255)                    # a hazard mark
+    return outline(im)
+
+def detonator():
+    im, px = canvas()
+    rect(px, 4, 6, 11, 14, (64, 68, 60)); rect(px, 4, 6, 11, 6, (96, 100, 90)); rect(px, 4, 14, 11, 14, (40, 42, 38))
+    rect(px, 6, 8, 9, 9, (30, 32, 30)); px[7, 8] = (220, 40, 40, 255)                                   # the readout
+    rect(px, 6, 11, 9, 12, (200, 40, 36)); rect(px, 6, 11, 9, 11, (236, 80, 70))                        # the button
+    rect(px, 10, 1, 10, 5, (40, 40, 44)); px[10, 0] = (200, 40, 36, 255)                                # aerial
+    return outline(im)
+
 SPRITES = {
     "pistol_rounds": pistol_rounds, "rifle_rounds": rifle_rounds, "sniper_round": sniper_round,
     "shotgun_shell": shotgun_shell, "laser_cell": laser_cell, "grenade": grenade, "molotov": molotov,
     "bandage": bandage, "medkit": medkit,
     "adrenaline_syringe": lambda: syringe((230, 200, 60)), "antidote_syringe": lambda: syringe((90, 200, 120)),
+    "pipe_bomb": pipe_bomb, "smoke_grenade": smoke_grenade, "chemical_grenade": chemical_grenade, "detonator": detonator,
 }
 
 def write(path, obj):

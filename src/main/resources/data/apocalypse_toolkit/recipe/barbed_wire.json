@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "N N",
+    " N ",
+    "N N"
+  ],
+  "key": {
+    "N": "minecraft:iron_nugget"
+  },
+  "result": {
+    "id": "apocalypse_toolkit:barbed_wire",
+    "count": 3
+  }
+}

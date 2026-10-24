@@ -30,6 +30,14 @@ hand-edited unless you mean to start again).
   guns). The blockstate turns it in quarter turns as it tracks a target. Its screen: `textures/gui/container/sentry.png`.
 - Regenerate: `python3 tools/art/sentry.py`.
 
+## C4, barbed wire, spikes
+
+- `tools/art/defences.py`. The C4 charge is cuboids on a palette (`models/block/c4.json`, lying on the floor, turned
+  like a button by its blockstate). Barbed wire is a cross (like a cobweb) of `textures/block/barbed_wire.png`. Spikes
+  are a 9-pixel riveted plate with crossed planes of points standing on it (`models/block/spikes.json`): edit the
+  points in `spikes_side.png`'s top 7 rows.
+- Pipe bomb, smoke and chemical grenades and the detonator are sprites in `tools/art/items.py`.
+
 ## Sounds
 
 - `tools/audio/synth.py` (numpy + soundfile; `../Threadwork/tools/audio/.venv/bin/python` has both) synthesises every

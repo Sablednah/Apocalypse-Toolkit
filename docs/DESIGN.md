@@ -21,8 +21,8 @@ Sable's decisions (2026-10-23):
 
 Built overnight in the ZARP session (Sable asked): **all of phase 1 and the first of phase 2**, see `CHANGELOG.md`
 and `README.md`. Self-test 28/28 on a dev server. Not yet seen in a client: the models' display transforms, the
-sounds in game, the sentry's screen and the scope zoom want a look. Not in yet: pipe bomb, smoke and chemical
-grenades, C4 and mines (GBG had them; not asked for), the Threadwork crowbar's migration, ZARP's switch-over.
+sounds in game, the sentry's screen and the scope zoom want a look. Since added (Sable asked): pipe bomb, smoke and chemical grenades, C4 and
+the detonator, barbed wire and spikes. Self-test 47/47. Not in: mines; the Threadwork crowbar's migration; ZARP's switch-over.
 
 Tuning lives in one place per thing: guns in `ModRegistry` (`GunSpec` per gun), the sentry's numbers at the top of
 `SentryBlockEntity`, grenade and molotov at the top of their entities, medicine in `medical/Medical`.

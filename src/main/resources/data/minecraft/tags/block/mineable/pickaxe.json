@@ -1,5 +1,7 @@
 {
   "values": [
-    "apocalypse_toolkit:sentry"
+    "apocalypse_toolkit:sentry",
+    "apocalypse_toolkit:barbed_wire",
+    "apocalypse_toolkit:spikes"
   ]
 }

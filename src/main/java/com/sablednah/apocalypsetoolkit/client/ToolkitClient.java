@@ -47,6 +47,9 @@ public final class ToolkitClient {
         modBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> {
             e.registerEntityRenderer(ModRegistry.GRENADE_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.MOLOTOV_ENTITY.get(), ThrownItemRenderer::new);
+            e.registerEntityRenderer(ModRegistry.PIPE_BOMB_ENTITY.get(), ThrownItemRenderer::new);
+            e.registerEntityRenderer(ModRegistry.SMOKE_GRENADE_ENTITY.get(), ThrownItemRenderer::new);
+            e.registerEntityRenderer(ModRegistry.CHEMICAL_GRENADE_ENTITY.get(), ThrownItemRenderer::new);
         });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> {
             while (RELOAD.consumeClick()) {

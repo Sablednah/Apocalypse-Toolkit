@@ -80,7 +80,7 @@ def main():
     write(os.path.join(D, NS, "loot_table", "blocks", "sentry.json"), {"type": "minecraft:block", "pools": [
         {"rolls": 1, "entries": [{"type": "minecraft:item", "name": f"{NS}:sentry"}],
          "conditions": [{"condition": "minecraft:survives_explosion"}]}]})
-    write(os.path.join(D, "minecraft", "tags", "block", "mineable", "pickaxe.json"), {"values": [f"{NS}:sentry"]})
+    write(os.path.join(D, "minecraft", "tags", "block", "mineable", "pickaxe.json"), {"values": [f"{NS}:sentry", f"{NS}:barbed_wire", f"{NS}:spikes"]})
     write(os.path.join(D, NS, "recipe", "sentry.json"), {"type": "minecraft:crafting_shaped", "category": "redstone",
         "pattern": ["IDI", "RCR", "I I"], "key": {"I": "minecraft:iron_ingot", "D": "minecraft:dispenser",
                                                   "R": "minecraft:redstone", "C": "minecraft:observer"},

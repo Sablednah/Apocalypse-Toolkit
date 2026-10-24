@@ -27,6 +27,23 @@ into a pack.
 - **Grenade**: bounces, goes off after 3 seconds. Breaks blocks only where mobs may (the mobGriefing rule, and claim
   mods that veto explosions).
 - **Molotov**: smashes and sets everything within 2.5 blocks alight; lays fire on the ground only where mobs may grief.
+- **Pipe Bomb**: beeps faster and faster for 5 seconds while every monster within 24 blocks makes for it, then a
+  bigger blast than a grenade. Throw it, then go the other way.
+- **Smoke Grenade**: a cloud 4 blocks across for 15 seconds. Mobs in it lose whoever they were after; anything in it
+  is blinded. Covers a retreat.
+- **Chemical Grenade**: a lingering gas cloud of Wither, Poison and Slowness (Wither because the dead shrug off poison).
+
+## C4
+
+Stick a **C4 Charge** to any floor, wall or ceiling; it's yours. Your **Detonator** sets off every charge you placed
+within 96 blocks, nearest first, in a quick ripple. A blast that reaches a charge (anyone's) sets it off too. Broken
+by hand, a charge drops safely.
+
+## Defences
+
+- **Barbed Wire**: no wall to it, so anything can push in, but it drags like a cobweb and cuts whatever is caught in
+  it (1.5 a time). Zombies walk straight into it.
+- **Spikes**: hurt whatever walks on them (3 a time) unless it sneaks across; landing on them doubles the fall.
 
 ## Medicine
 
@@ -51,15 +68,16 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 ## For packs
 
 - Recipes are plain vanilla-style JSON; override them.
+- Recipes for barbed wire and spikes use iron nuggets, so a pack can swap in its scrap.
 - Tags: `#apocalypse_toolkit:guns`, `:ammo`, `:throwables`, `:medical`, `:melee`, `:sprungable`.
 - Loot tables: `apocalypse_toolkit:chests/ammo_cache`, `:chests/armoury`, `:chests/medical_cabinet` (rarer things
   carry quality, so Luck finds them more often).
-- LegendQuest: the shiv is `#legendquest:finesse`, grenades and molotovs `#legendquest:thrown` (optional entries).
+- LegendQuest: the shiv is `#legendquest:finesse`, every throwable `#legendquest:thrown` (optional entries).
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 28 checks of the mechanics
-(firing, reloading, shotgun loading, the sentry, sprung doors, grenades, recipes, loot) and stops. Art and sound are
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 47 checks of the mechanics
+(firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 
 MIT licence.

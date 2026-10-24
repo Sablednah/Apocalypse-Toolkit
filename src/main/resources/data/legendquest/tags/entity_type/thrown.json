@@ -8,6 +8,18 @@
     {
       "id": "apocalypse_toolkit:molotov",
       "required": false
+    },
+    {
+      "id": "apocalypse_toolkit:pipe_bomb",
+      "required": false
+    },
+    {
+      "id": "apocalypse_toolkit:smoke_grenade",
+      "required": false
+    },
+    {
+      "id": "apocalypse_toolkit:chemical_grenade",
+      "required": false
     }
   ]
 }

@@ -126,6 +126,43 @@ public final class ModRegistry {
             p -> new ThrowableItem(p, ThrowableItem.Kind.MOLOTOV), p -> p.stacksTo(8));
     static { ORDER.add(GRENADE); ORDER.add(MOLOTOV); }
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.sablednah.apocalypsetoolkit.throwable.PipeBombEntity>> PIPE_BOMB_ENTITY =
+            thrown("pipe_bomb", com.sablednah.apocalypsetoolkit.throwable.PipeBombEntity::new);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.sablednah.apocalypsetoolkit.throwable.SmokeGrenadeEntity>> SMOKE_GRENADE_ENTITY =
+            thrown("smoke_grenade", com.sablednah.apocalypsetoolkit.throwable.SmokeGrenadeEntity::new);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.sablednah.apocalypsetoolkit.throwable.ChemicalGrenadeEntity>> CHEMICAL_GRENADE_ENTITY =
+            thrown("chemical_grenade", com.sablednah.apocalypsetoolkit.throwable.ChemicalGrenadeEntity::new);
+
+    public static final DeferredItem<ThrowableItem> PIPE_BOMB = throwable("pipe_bomb", ThrowableItem.Kind.PIPE_BOMB);
+    public static final DeferredItem<ThrowableItem> SMOKE_GRENADE = throwable("smoke_grenade", ThrowableItem.Kind.SMOKE);
+    public static final DeferredItem<ThrowableItem> CHEMICAL_GRENADE = throwable("chemical_grenade", ThrowableItem.Kind.CHEMICAL);
+
+    private static <T extends net.minecraft.world.entity.Entity> DeferredHolder<EntityType<?>, EntityType<T>> thrown(String name, EntityType.EntityFactory<T> factory) {
+        return ENTITIES.register(name, () -> EntityType.Builder.<T>of(factory, MobCategory.MISC)
+                .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(key(name)));
+    }
+
+    private static DeferredItem<ThrowableItem> throwable(String name, ThrowableItem.Kind kind) {
+        DeferredItem<ThrowableItem> it = ITEMS.registerItem(name, p -> new ThrowableItem(p, kind), p -> p.stacksTo(8));
+        ORDER.add(it);
+        return it;
+    }
+
+    // ---- C4 -----------------------------------------------------------------------------------
+
+    public static final net.neoforged.neoforge.registries.DeferredBlock<com.sablednah.apocalypsetoolkit.explosive.C4Block> C4 =
+            BLOCKS.registerBlock("c4", com.sablednah.apocalypsetoolkit.explosive.C4Block::new,
+                    p -> p.mapColor(net.minecraft.world.level.material.MapColor.SAND).strength(0.5F).noCollision()
+                            .sound(net.minecraft.world.level.block.SoundType.WOOL).pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> C4_ITEM = ITEMS.registerSimpleBlockItem("c4", C4,
+            p -> p.stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final Supplier<net.minecraft.world.level.block.entity.BlockEntityType<com.sablednah.apocalypsetoolkit.explosive.C4BlockEntity>> C4_BE =
+            BLOCK_ENTITIES.register("c4", () -> new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                    com.sablednah.apocalypsetoolkit.explosive.C4BlockEntity::new, C4.get()));
+    public static final DeferredItem<com.sablednah.apocalypsetoolkit.explosive.DetonatorItem> DETONATOR = ITEMS.registerItem("detonator",
+            com.sablednah.apocalypsetoolkit.explosive.DetonatorItem::new, p -> p.stacksTo(1));
+    static { ORDER.add(C4_ITEM); ORDER.add(DETONATOR); }
+
     private static ResourceKey<EntityType<?>> key(String name) {
         return ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(ID, name));
     }
@@ -159,6 +196,25 @@ public final class ModRegistry {
     public static final DeferredItem<com.sablednah.apocalypsetoolkit.gear.HuntingBowItem> HUNTING_BOW = ITEMS.registerItem("hunting_bow",
             com.sablednah.apocalypsetoolkit.gear.HuntingBowItem::new, p -> p.durability(500).enchantable(1));
     static { ORDER.add(HUNTING_BOW); }
+
+    // ---- defences ------------------------------------------------------------------------------
+
+    public static final ResourceKey<net.minecraft.world.damagesource.DamageType> BARBED_WIRE_DAMAGE =
+            ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(ID, "barbed_wire"));
+    public static final ResourceKey<net.minecraft.world.damagesource.DamageType> SPIKES_DAMAGE =
+            ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(ID, "spikes"));
+
+    public static final net.neoforged.neoforge.registries.DeferredBlock<com.sablednah.apocalypsetoolkit.defence.BarbedWireBlock> BARBED_WIRE =
+            BLOCKS.registerBlock("barbed_wire", com.sablednah.apocalypsetoolkit.defence.BarbedWireBlock::new,
+                    p -> p.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(2.0F, 3F).requiresCorrectToolForDrops()
+                            .noCollision().noOcclusion().sound(net.minecraft.world.level.block.SoundType.CHAIN));
+    public static final net.neoforged.neoforge.registries.DeferredBlock<com.sablednah.apocalypsetoolkit.defence.SpikeBlock> SPIKES =
+            BLOCKS.registerBlock("spikes", com.sablednah.apocalypsetoolkit.defence.SpikeBlock::new,
+                    p -> p.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0F, 6F).requiresCorrectToolForDrops()
+                            .noOcclusion().sound(net.minecraft.world.level.block.SoundType.METAL));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BARBED_WIRE_ITEM = ITEMS.registerSimpleBlockItem("barbed_wire", BARBED_WIRE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIKES_ITEM = ITEMS.registerSimpleBlockItem("spikes", SPIKES);
+    static { ORDER.add(BARBED_WIRE_ITEM); ORDER.add(SPIKES_ITEM); }
 
     // ---- the sentry turret --------------------------------------------------------------------
 

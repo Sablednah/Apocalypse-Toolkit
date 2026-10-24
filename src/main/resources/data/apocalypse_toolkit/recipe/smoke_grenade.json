@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "minecraft:gunpowder",
+    "#minecraft:coals",
+    "#minecraft:coals"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:smoke_grenade",
+    "count": 2
+  }
+}

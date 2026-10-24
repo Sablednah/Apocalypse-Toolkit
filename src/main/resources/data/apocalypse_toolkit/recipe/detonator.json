@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "minecraft:copper_ingot",
+    "minecraft:redstone_torch",
+    "minecraft:stone_button"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:detonator",
+    "count": 1
+  }
+}

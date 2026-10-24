@@ -1,6 +1,9 @@
 {
   "values": [
     "apocalypse_toolkit:grenade",
-    "apocalypse_toolkit:molotov"
+    "apocalypse_toolkit:molotov",
+    "apocalypse_toolkit:pipe_bomb",
+    "apocalypse_toolkit:smoke_grenade",
+    "apocalypse_toolkit:chemical_grenade"
   ]
 }

@@ -11,9 +11,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-/** A grenade or a molotov: right-click throws it (a short cooldown between throws). */
+/** A grenade, molotov, pipe bomb, smoke or chemical grenade: right-click throws it (a short cooldown between throws). */
 public class ThrowableItem extends Item {
-    public enum Kind { GRENADE, MOLOTOV }
+    public enum Kind { GRENADE, MOLOTOV, PIPE_BOMB, SMOKE, CHEMICAL }
 
     private final Kind kind;
 
@@ -28,7 +28,13 @@ public class ThrowableItem extends Item {
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS,
                 0.6F, 0.5F + level.getRandom().nextFloat() * 0.2F);
         if (level instanceof ServerLevel server) {
-            ThrowableItemProjectile thrown = kind == Kind.GRENADE ? new GrenadeEntity(server, player, stack) : new MolotovEntity(server, player, stack);
+            ThrowableItemProjectile thrown = switch (kind) {
+                case GRENADE -> new GrenadeEntity(server, player, stack);
+                case MOLOTOV -> new MolotovEntity(server, player, stack);
+                case PIPE_BOMB -> new PipeBombEntity(server, player, stack);
+                case SMOKE -> new SmokeGrenadeEntity(server, player, stack);
+                case CHEMICAL -> new ChemicalGrenadeEntity(server, player, stack);
+            };
             thrown.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, 1.1F, 1.0F);
             server.addFreshEntity(thrown);
         }

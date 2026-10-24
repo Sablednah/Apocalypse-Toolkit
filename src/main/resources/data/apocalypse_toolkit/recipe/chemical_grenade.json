@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "minecraft:gunpowder",
+    "minecraft:fermented_spider_eye",
+    "minecraft:poisonous_potato"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:chemical_grenade",
+    "count": 2
+  }
+}

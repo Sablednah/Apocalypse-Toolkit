@@ -15,12 +15,15 @@ def w(path, obj):
 
 GUNS = ["pistol", "smg", "shotgun", "rifle", "sniper_rifle", "laser_rifle"]
 AMMO = ["pistol_rounds", "shotgun_shell", "rifle_rounds", "sniper_round", "laser_cell"]
-THROWN = ["grenade", "molotov"]
+THROWN = ["grenade", "molotov", "pipe_bomb", "smoke_grenade", "chemical_grenade"]
 MEDICAL = ["bandage", "medkit", "adrenaline_syringe", "antidote_syringe"]
 ns = lambda n: f"{NS}:{n}"
 
 # ---- damage types ---------------------------------------------------------------------------
 for t in ("bullet", "laser"):
+    w(f"{DATA}/{NS}/damage_type/{t}.json", {"exhaustion": 0.1, "message_id": f"{NS}.{t}",
+                                            "scaling": "when_caused_by_living_non_player"})
+for t in ("barbed_wire", "spikes"):                 # like a cactus: no attacker, armour helps
     w(f"{DATA}/{NS}/damage_type/{t}.json", {"exhaustion": 0.1, "message_id": f"{NS}.{t}",
                                             "scaling": "when_caused_by_living_non_player"})
 w(f"{DATA}/minecraft/tags/damage_type/is_projectile.json", {"replace": False, "values": [ns("bullet"), ns("laser")]})
@@ -55,6 +58,14 @@ shapeless("sniper_round", [I, "minecraft:copper_ingot", "minecraft:gunpowder", "
 shapeless("laser_cell", ["minecraft:redstone", "minecraft:redstone", "minecraft:glowstone_dust", "minecraft:copper_ingot"], 2)
 shaped("grenade", [" N ", "IGI", " I "], {"N": "minecraft:iron_nugget", "I": I, "G": "minecraft:gunpowder"}, 2)
 shapeless("molotov", ["minecraft:glass_bottle", "minecraft:string", "#minecraft:coals"])
+shapeless("pipe_bomb", [I, "minecraft:gunpowder", "minecraft:gunpowder", "minecraft:redstone", "minecraft:string"])
+shapeless("smoke_grenade", [I, "minecraft:gunpowder", "#minecraft:coals", "#minecraft:coals"], 2)
+shapeless("chemical_grenade", [I, "minecraft:gunpowder", "minecraft:fermented_spider_eye", "minecraft:poisonous_potato"], 2)
+shapeless("c4", ["minecraft:tnt", "minecraft:clay_ball", "minecraft:redstone"], 2)
+shapeless("detonator", [I, "minecraft:copper_ingot", "minecraft:redstone_torch", "minecraft:stone_button"])
+# defences: a use for scrap (a pack can swap the nuggets for its scrap)
+shaped("barbed_wire", ["N N", " N ", "N N"], {"N": "minecraft:iron_nugget"}, 3, "building")
+shaped("spikes", ["N N", "III"], {"N": "minecraft:iron_nugget", "I": I}, 2, "building")
 shapeless("bandage", ["#minecraft:wool", "minecraft:string"], 3, "misc")
 shapeless("medkit", [ns("bandage"), ns("bandage"), "minecraft:glistering_melon_slice", "minecraft:leather"], 1, "misc")
 shapeless("adrenaline_syringe", ["minecraft:glass_bottle", "minecraft:sugar", "minecraft:sugar", "minecraft:iron_nugget"], 1, "misc")
@@ -92,6 +103,7 @@ table("ammo_cache", (2, 4), [entry("pistol_rounds", 10, 4, 16), entry("shotgun_s
       entry("rifle_rounds", 6, 4, 12, 1), entry("sniper_round", 2, 1, 4, 2), entry("laser_cell", 1, 1, 2, 3)], 4)
 table("armoury", (2, 4), [entry("pistol", 6, quality=1), entry("shotgun", 4, quality=1), entry("smg", 3, quality=2),
       entry("rifle", 2, quality=2), entry("sniper_rifle", 1, quality=3), entry("grenade", 5, 1, 3), entry("molotov", 4, 1, 3),
+      entry("pipe_bomb", 3, 1, 2, 1), entry("smoke_grenade", 3, 1, 2), entry("chemical_grenade", 2, 1, 2, 1), entry("c4", 1, 1, 2, 3),
       entry("pistol_rounds", 8, 4, 16), entry("rifle_rounds", 5, 4, 12), entry("sentry", 1, quality=3)], 6)
 table("medical_cabinet", (1, 3), [entry("bandage", 10, 1, 4), entry("medkit", 3, quality=2),
       entry("adrenaline_syringe", 3, quality=1), entry("antidote_syringe", 4)], 5)
@@ -103,7 +115,8 @@ names = {
     "rifle_rounds": "Rifle Rounds", "sniper_round": "Sniper Round", "laser_cell": "Laser Cell", "grenade": "Grenade",
     "molotov": "Molotov", "bandage": "Bandage", "medkit": "Medkit", "adrenaline_syringe": "Adrenaline Syringe",
     "antidote_syringe": "Antidote Syringe", "crowbar": "Crowbar", "lead_pipe": "Lead Pipe", "shiv": "Shiv",
-    "hunting_bow": "Hunting Bow",
+    "hunting_bow": "Hunting Bow", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
+    "chemical_grenade": "Chemical Grenade", "detonator": "Detonator",
 }
 lang = {f"item.{NS}.{k}": v for k, v in names.items()}
 lang.update({f"entity.{NS}.{e}": names[e] for e in THROWN})
@@ -117,6 +130,14 @@ lang.update({
     "tooltip.apocalypse_toolkit.stats": "Damage %s, range %s, %s shots a second",
     "tooltip.apocalypse_toolkit.zoom": "Sneak to aim through the scope",
     "tooltip.apocalypse_toolkit.sprung": "Sprung: swings shut behind you",
+    "block.apocalypse_toolkit.c4": "C4 Charge", "block.apocalypse_toolkit.barbed_wire": "Barbed Wire",
+    "block.apocalypse_toolkit.spikes": "Spikes",
+    "message.apocalypse_toolkit.detonator.none": "No charges of yours within %s blocks.",
+    "message.apocalypse_toolkit.detonator.armed": "%s charge(s) going off!",
+    f"death.attack.{NS}.barbed_wire": "%1$s got tangled in barbed wire",
+    f"death.attack.{NS}.barbed_wire.player": "%1$s got tangled in barbed wire whilst trying to escape %2$s",
+    f"death.attack.{NS}.spikes": "%1$s was impaled on spikes",
+    f"death.attack.{NS}.spikes.player": "%1$s was impaled on spikes whilst trying to escape %2$s",
     "block.apocalypse_toolkit.sentry": "Sentry Turret", "sentry.apocalypse_toolkit.title": "%s's Sentry",
     "sentry.apocalypse_toolkit.wear": "Condition %s/%s", "sentry.apocalypse_toolkit.mode.off": "Off",
     "sentry.apocalypse_toolkit.mode.hostiles": "Hostiles", "sentry.apocalypse_toolkit.mode.hostiles_and_players": "+ Players",
