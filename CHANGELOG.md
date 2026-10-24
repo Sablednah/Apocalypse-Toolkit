@@ -20,4 +20,5 @@ First build (2026-10-24, overnight).
   Poison, Slowness gas).
 - C4 charges (stick to any face, owned) and the detonator (96 blocks, rippling; blasts chain).
 - Barbed wire (drags and cuts) and spikes (hurt unless you sneak; double fall damage), with their own death messages.
-- Self-test: `./gradlew runServer -Pselftest`, 47 checks.
+- Guns reload from backpacks and other container items (NeoForge's item capability), and from Curios slots.
+- Self-test: `./gradlew runServer -Pselftest`, 49 checks (put Sophisticated Backpacks in run/mods to test it too).

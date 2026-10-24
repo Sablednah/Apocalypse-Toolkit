@@ -124,6 +124,67 @@ public final class SelfTest {
             check("reload fills the magazine", GunItem.loaded(pistol) == 12, "loaded " + GunItem.loaded(pistol));
             check("reload takes the rounds", fake.getInventory().getItem(9).getCount() == 8, "left " + fake.getInventory().getItem(9).getCount());
 
+            // ---- reloading from a container item (a backpack, if one is installed; a shulker box if it shares) ----
+            for (String id : new String[] { "sophisticatedbackpacks:backpack", "minecraft:shulker_box" }) {
+                var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(Identifier.parse(id));
+                if (item.isEmpty()) { results.add("SKIP reload from " + id + " (not installed)"); continue; }
+                fake.getInventory().clearContent();
+                ItemStack box = new ItemStack(item.get());
+                if (id.startsWith("sophisticated")) {           // a backpack makes its storage when first opened; do that
+                    try {
+                        Object w = Class.forName("net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper")
+                                .getMethod("fromStack", ItemStack.class).invoke(null, box);
+                        w.getClass().getMethod("getInventoryHandler").invoke(w);
+                    } catch (ReflectiveOperationException e) { results.add("note: couldn't open the backpack (" + e + ")"); }
+                }
+                fake.getInventory().setItem(20, box);
+                var h = net.neoforged.neoforge.transfer.access.ItemAccess.forPlayerSlot(fake, 20)
+                        .getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.ITEM);
+                if (h == null) { results.add("SKIP reload from " + id + " (shares no contents)"); continue; }
+                int put;
+                try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                    put = h.insert(net.neoforged.neoforge.transfer.item.ItemResource.of(ModRegistry.PISTOL_ROUNDS.get()), 20, tx);
+                    tx.commit();
+                }
+                ItemStack gun = new ItemStack(ModRegistry.PISTOL.get());
+                gun.set(ModRegistry.LOADED.get(), 0);
+                fake.setItemInHand(InteractionHand.MAIN_HAND, gun);
+                ModRegistry.PISTOL.get().startReload(level, fake, gun);
+                gun.set(ModRegistry.RELOAD_UNTIL.get(), 0L);
+                ModRegistry.PISTOL.get().inventoryTick(gun, level, fake, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+                int left = com.sablednah.apocalypsetoolkit.gun.Ammo.count(fake, ModRegistry.PISTOL_ROUNDS.get());
+                check("reload from " + id, put == 20 && GunItem.loaded(gun) == 12 && left == 8, "put " + put + ", loaded " + GunItem.loaded(gun) + ", left " + left);
+            }
+            fake.getInventory().clearContent();
+            var slots = com.sablednah.apocalypsetoolkit.gun.Ammo.Curios.slots(fake);
+            var bp = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(Identifier.parse("sophisticatedbackpacks:backpack"));
+            if (slots.isEmpty() || bp.isEmpty()) results.add("SKIP reload from a backpack worn in Curios (" + slots.size() + " Curios slots)");
+            else {
+                ItemStack pack = new ItemStack(bp.get());
+                try {
+                    Object w = Class.forName("net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper")
+                            .getMethod("fromStack", ItemStack.class).invoke(null, pack);
+                    Object inv = w.getClass().getMethod("getInventoryHandler").invoke(w);
+                } catch (ReflectiveOperationException e) { results.add("note: couldn't open the backpack (" + e + ")"); }
+                var h = net.neoforged.neoforge.transfer.access.ItemAccess.forStack(pack).getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.ITEM);
+                int put = 0;
+                if (h != null) try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                    put = h.insert(net.neoforged.neoforge.transfer.item.ItemResource.of(ModRegistry.PISTOL_ROUNDS.get()), 20, tx);
+                    tx.commit();
+                }
+                slots.get(0).set(pack);
+                ItemStack gun = new ItemStack(ModRegistry.PISTOL.get());
+                gun.set(ModRegistry.LOADED.get(), 0);
+                fake.setItemInHand(InteractionHand.MAIN_HAND, gun);
+                ModRegistry.PISTOL.get().startReload(level, fake, gun);
+                gun.set(ModRegistry.RELOAD_UNTIL.get(), 0L);
+                ModRegistry.PISTOL.get().inventoryTick(gun, level, fake, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+                int left = com.sablednah.apocalypsetoolkit.gun.Ammo.count(fake, ModRegistry.PISTOL_ROUNDS.get());
+                check("reload from a backpack worn in Curios", put == 20 && GunItem.loaded(gun) == 12 && left == 8,
+                        "put " + put + ", loaded " + GunItem.loaded(gun) + ", left " + left + ", " + slots.size() + " slots");
+                slots.get(0).set(ItemStack.EMPTY);
+            }
+
             ItemStack shotgun = new ItemStack(ModRegistry.SHOTGUN.get());
             fake.setItemInHand(InteractionHand.MAIN_HAND, shotgun);
             fake.getInventory().setItem(10, new ItemStack(ModRegistry.SHOTGUN_SHELL.get(), 3));

@@ -218,25 +218,11 @@ public class GunItem extends Item {
     }
 
     private int count(Player player) {
-        Item ammo = spec.ammo().get();
-        int n = 0;
-        var inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) if (inv.getItem(i).is(ammo)) n += inv.getItem(i).getCount();
-        return n;
+        return Ammo.count(player, spec.ammo().get());
     }
 
     private int take(Player player, int want) {
-        Item ammo = spec.ammo().get();
-        int got = 0;
-        var inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize() && got < want; i++) {
-            ItemStack s = inv.getItem(i);
-            if (!s.is(ammo)) continue;
-            int n = Math.min(want - got, s.getCount());
-            s.shrink(n);
-            got += n;
-        }
-        return got;
+        return Ammo.take(player, spec.ammo().get(), want);
     }
 
     // ---- display ------------------------------------------------------------------------------

@@ -16,7 +16,8 @@ into a pack.
 | Laser Rifle | 12 | 96 | 2.5/s | 16 | Laser Cells | a beam, rare |
 
 - **Right-click** fires (hold for an automatic). An empty gun clicks and starts reloading if you carry its ammo.
-- **Reload**: the Reload key (B by default, rebindable).
+- **Reload**: the Reload key (B by default, rebindable). Ammo comes from your inventory, then Curios slots, then any
+  backpack or container item that shares its contents (Sophisticated Backpacks, shulker boxes), carried or worn.
 - **Sneak** to steady your aim (half the spread).
 - A hit at head height does 1.5x damage (2x for the sniper). The bar under the gun shows rounds left.
 - Guns hit instantly (no bullet entity). Damage is `apocalypse_toolkit:bullet` / `:laser`, both in
@@ -76,7 +77,7 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 47 checks of the mechanics
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 49 checks of the mechanics
 (firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 
