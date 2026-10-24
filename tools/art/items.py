@@ -5,6 +5,10 @@ import json, os
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+import sys
+sys.path.insert(0, HERE)
+import iconsheet  # noqa: E402  (names painted by hand on the icon sheet: never redrawn here)
+PAINTED = iconsheet.hand_drawn()
 RES = os.path.join(HERE, "..", "..", "src", "main", "resources", "assets", "apocalypse_toolkit")
 NS = "apocalypse_toolkit"
 OUTLINE = (24, 22, 22, 255)
@@ -184,7 +188,7 @@ def main():
               {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}})
         write(os.path.join(RES, "items", name + ".json"), {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
     for name, draw in SPRITES.items():
-        draw().save(os.path.join(RES, "textures", "item", name + ".png"))
+        if name not in PAINTED: draw().save(os.path.join(RES, "textures", "item", name + ".png"))
         write(os.path.join(RES, "models", "item", name + ".json"),
               {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}})
         write(os.path.join(RES, "items", name + ".json"),

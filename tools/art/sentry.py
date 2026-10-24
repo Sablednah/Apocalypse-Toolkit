@@ -68,21 +68,23 @@ def main():
                 for a, b, s in boxes]
     tex = {"sentry": f"{NS}:block/sentry", "particle": f"{NS}:block/sentry"}
     credit = "Apocalypse Toolkit, tools/art/sentry.py; tweak in Blockbench"
-    write(os.path.join(A, "models", "block", "sentry_base.json"),
-          {"credit": credit, "texture_size": [16, 16], "textures": tex, "elements": el(BOXES[:BASE_N])})
-    write(os.path.join(A, "models", "block", "sentry_head.json"),
-          {"credit": credit + " (the turning head, barrel to -Z)", "texture_size": [16, 16], "textures": tex, "elements": el(BOXES[BASE_N:])})
-    write(os.path.join(A, "models", "block", "sentry.json"),
-          {"credit": credit + " (base and head together, for the item)", "texture_size": [16, 16], "textures": tex, "elements": el(BOXES),
-           "display": {"gui": {"rotation": [30, 225, 0], "scale": [0.625, 0.625, 0.625]},
+    display = {"gui": {"rotation": [30, 225, 0], "scale": [0.625, 0.625, 0.625]},
                        "ground": {"translation": [0, 3, 0], "scale": [0.25, 0.25, 0.25]},
                        "fixed": {"scale": [0.5, 0.5, 0.5]},
                        "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.375, 0.375, 0.375]},
                        "firstperson_righthand": {"rotation": [0, 45, 0], "scale": [0.4, 0.4, 0.4]},
-                       "firstperson_lefthand": {"rotation": [0, 225, 0], "scale": [0.4, 0.4, 0.4]}}})
+                       "firstperson_lefthand": {"rotation": [0, 225, 0], "scale": [0.4, 0.4, 0.4]}}
+    write(os.path.join(A, "models", "block", "sentry_base.json"),
+          {"credit": credit, "texture_size": [16, 16], "textures": tex, "elements": el(BOXES[:BASE_N]), "display": display})
+    write(os.path.join(A, "models", "block", "sentry_head.json"),
+          {"credit": credit + " (the turning head, barrel to -Z)", "texture_size": [16, 16], "textures": tex,
+           "elements": el(BOXES[BASE_N:]), "display": display})
     write(os.path.join(A, "blockstates", "sentry.json"), {"variants": {
         "head=false": {"model": f"{NS}:block/sentry_base"}, "head=true": {"model": f"{NS}:block/sentry_head"}}})
-    write(os.path.join(A, "items", "sentry.json"), {"model": {"type": "minecraft:model", "model": f"{NS}:block/sentry"}})
+    # the item draws the two real parts, so Blockbench edits to either show in the hand too
+    write(os.path.join(A, "items", "sentry.json"), {"model": {"type": "minecraft:composite", "models": [
+        {"type": "minecraft:model", "model": f"{NS}:block/sentry_base"},
+        {"type": "minecraft:model", "model": f"{NS}:block/sentry_head"}]}})
     write(os.path.join(D, NS, "loot_table", "blocks", "sentry.json"), {"type": "minecraft:block", "pools": [
         {"rolls": 1, "entries": [{"type": "minecraft:item", "name": f"{NS}:sentry"}],
          "conditions": [{"condition": "minecraft:survives_explosion"}]}]})

@@ -9,6 +9,10 @@ import json, os, random
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+import sys
+sys.path.insert(0, HERE)
+import iconsheet  # noqa: E402  (names painted by hand on the icon sheet: never redrawn here)
+PAINTED = iconsheet.hand_drawn()
 RES = os.path.join(HERE, "..", "..", "src", "main", "resources", "assets", "apocalypse_toolkit")
 NS = "apocalypse_toolkit"
 
@@ -155,7 +159,7 @@ def main():
     for n, (name, boxes) in enumerate(GUNS.items()):
         os.makedirs(os.path.join(RES, "textures", "item", "gun"), exist_ok=True)
         palette(n + 1).save(os.path.join(RES, "textures", "item", "gun", name + ".png"))
-        icon(boxes, 0.0 if name == "pistol" else 35.0).save(os.path.join(RES, "textures", "item", name + ".png"))
+        if name not in PAINTED: icon(boxes, 0.0 if name == "pistol" else 35.0).save(os.path.join(RES, "textures", "item", name + ".png"))
         write(os.path.join(RES, "models", "item", name + "_3d.json"), model(name, boxes))
         write(os.path.join(RES, "models", "item", name + ".json"),
               {"parent": "minecraft:item/handheld", "textures": {"layer0": f"{NS}:item/{name}"}})

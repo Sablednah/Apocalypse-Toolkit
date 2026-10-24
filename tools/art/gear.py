@@ -5,6 +5,10 @@ import json, math, os
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+import sys
+sys.path.insert(0, HERE)
+import iconsheet  # noqa: E402  (names painted by hand on the icon sheet: never redrawn here)
+PAINTED = iconsheet.hand_drawn()
 RES = os.path.join(HERE, "..", "..", "src", "main", "resources", "assets", "apocalypse_toolkit")
 NS = "apocalypse_toolkit"
 OUTLINE = (24, 22, 22, 255)
@@ -101,13 +105,13 @@ def write(path, obj):
 def main():
     tex = os.path.join(RES, "textures", "item")
     for name, draw in (("crowbar", crowbar), ("lead_pipe", lead_pipe), ("shiv", shiv)):
-        if name not in HAND_DRAWN: draw().save(os.path.join(tex, name + ".png"))
+        if name not in HAND_DRAWN | PAINTED: draw().save(os.path.join(tex, name + ".png"))
         write(os.path.join(RES, "models", "item", name + ".json"),
               {"parent": "minecraft:item/handheld", "textures": {"layer0": f"{NS}:item/{name}"}})
         write(os.path.join(RES, "items", name + ".json"), {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
     frames = ["hunting_bow", "hunting_bow_pulling_0", "hunting_bow_pulling_1", "hunting_bow_pulling_2"]
     for i, name in enumerate(frames):
-        bow(i).save(os.path.join(tex, name + ".png"))
+        if name not in PAINTED: bow(i).save(os.path.join(tex, name + ".png"))
         write(os.path.join(RES, "models", "item", name + ".json"),
               {"parent": "minecraft:item/bow", "textures": {"layer0": f"{NS}:item/{name}"}})
     m = lambda n: {"type": "minecraft:model", "model": f"{NS}:item/{n}"}

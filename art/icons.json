@@ -1,0 +1,153 @@
+{
+ "namespace": "apocalypse_toolkit",
+ "cell": 16,
+ "gutter": 2,
+ "columns": 12,
+ "icons": [
+  {
+   "file": "adrenaline_syringe.png",
+   "x": 2,
+   "y": 2
+  },
+  {
+   "file": "antidote_syringe.png",
+   "x": 20,
+   "y": 2
+  },
+  {
+   "file": "bandage.png",
+   "x": 38,
+   "y": 2
+  },
+  {
+   "file": "chemical_grenade.png",
+   "x": 56,
+   "y": 2
+  },
+  {
+   "file": "crowbar.png",
+   "x": 74,
+   "y": 2
+  },
+  {
+   "file": "detonator.png",
+   "x": 92,
+   "y": 2
+  },
+  {
+   "file": "grenade.png",
+   "x": 110,
+   "y": 2
+  },
+  {
+   "file": "hunting_bow.png",
+   "x": 128,
+   "y": 2
+  },
+  {
+   "file": "hunting_bow_pulling_0.png",
+   "x": 146,
+   "y": 2
+  },
+  {
+   "file": "hunting_bow_pulling_1.png",
+   "x": 164,
+   "y": 2
+  },
+  {
+   "file": "hunting_bow_pulling_2.png",
+   "x": 182,
+   "y": 2
+  },
+  {
+   "file": "laser_cell.png",
+   "x": 200,
+   "y": 2
+  },
+  {
+   "file": "laser_rifle.png",
+   "x": 2,
+   "y": 20
+  },
+  {
+   "file": "lead_pipe.png",
+   "x": 20,
+   "y": 20
+  },
+  {
+   "file": "medkit.png",
+   "x": 38,
+   "y": 20
+  },
+  {
+   "file": "molotov.png",
+   "x": 56,
+   "y": 20
+  },
+  {
+   "file": "pipe_bomb.png",
+   "x": 74,
+   "y": 20
+  },
+  {
+   "file": "pistol.png",
+   "x": 92,
+   "y": 20
+  },
+  {
+   "file": "pistol_rounds.png",
+   "x": 110,
+   "y": 20
+  },
+  {
+   "file": "plaster.png",
+   "x": 128,
+   "y": 20
+  },
+  {
+   "file": "rifle.png",
+   "x": 146,
+   "y": 20
+  },
+  {
+   "file": "rifle_rounds.png",
+   "x": 164,
+   "y": 20
+  },
+  {
+   "file": "shiv.png",
+   "x": 182,
+   "y": 20
+  },
+  {
+   "file": "shotgun.png",
+   "x": 200,
+   "y": 20
+  },
+  {
+   "file": "shotgun_shell.png",
+   "x": 2,
+   "y": 38
+  },
+  {
+   "file": "smg.png",
+   "x": 20,
+   "y": 38
+  },
+  {
+   "file": "smoke_grenade.png",
+   "x": 38,
+   "y": 38
+  },
+  {
+   "file": "sniper_rifle.png",
+   "x": 56,
+   "y": 38
+  },
+  {
+   "file": "sniper_round.png",
+   "x": 74,
+   "y": 38
+  }
+ ]
+}

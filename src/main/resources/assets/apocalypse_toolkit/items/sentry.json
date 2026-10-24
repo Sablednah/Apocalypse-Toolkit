@@ -1,6 +1,15 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "apocalypse_toolkit:block/sentry"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "apocalypse_toolkit:block/sentry_base"
+      },
+      {
+        "type": "minecraft:model",
+        "model": "apocalypse_toolkit:block/sentry_head"
+      }
+    ]
   }
 }
