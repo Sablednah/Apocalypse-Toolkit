@@ -17,7 +17,13 @@ Sable's decisions (2026-10-23):
 - **Client-side parts are fine** (a client mod): sentry turrets get a GUI.
 - **Order: reimplement GBG's useful set first, then our own additions.**
 
-## Status (2026-10-24)
+## Status
+
+**2026-10-25: ZARP switched over.** Gamingbarn's Guns is out of the pack; Threadwork's loot, quests, class gating
+and recipes (its `guns-tuning` datapack: scrap and parts) point at the Toolkit, and the Crowbar, Plaster and sprung
+gates moved here (Threadwork aliases the old ids). Threadwork requires the Toolkit now.
+
+### 2026-10-24
 
 Built overnight in the ZARP session (Sable asked): **all of phase 1 and the first of phase 2**, see `CHANGELOG.md`
 and `README.md`. Self-test 28/28 on a dev server. Not yet seen in a client: the models' display transforms, the
