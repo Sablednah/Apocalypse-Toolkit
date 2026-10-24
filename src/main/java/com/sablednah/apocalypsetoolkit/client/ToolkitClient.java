@@ -25,7 +25,7 @@ public final class ToolkitClient {
 
     private static final KeyMapping.Category CATEGORY =
             new KeyMapping.Category(Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "toolkit"));
-    public static final KeyMapping RELOAD = new KeyMapping("key.apocalypse_toolkit.reload", GLFW.GLFW_KEY_B, CATEGORY);
+    public static final KeyMapping RELOAD = new KeyMapping("key.apocalypse_toolkit.reload", GLFW.GLFW_KEY_R, CATEGORY);
 
     public static void register(IEventBus modBus) {
         modBus.addListener((RegisterKeyMappingsEvent e) -> {

@@ -16,7 +16,7 @@ into a pack.
 | Laser Rifle | 12 | 96 | 2.5/s | 16 | Laser Cells | a beam, rare |
 
 - **Right-click** fires (hold for an automatic). An empty gun clicks and starts reloading if you carry its ammo.
-- **Reload**: the Reload key (B by default, rebindable). Ammo comes from your inventory, then Curios slots, then any
+- **Reload**: the Reload key (R by default, rebindable). Ammo comes from your inventory, then Curios slots, then any
   backpack or container item that shares its contents (Sophisticated Backpacks, shulker boxes), carried or worn.
 - **Sneak** to steady your aim (half the spread).
 - A hit at head height does 1.5x damage (2x for the sniper). The bar under the gun shows rounds left.
