@@ -132,6 +132,8 @@ lang.update({
     "tooltip.apocalypse_toolkit.sprung": "Sprung: swings shut behind you",
     "block.apocalypse_toolkit.c4": "C4 Charge", "block.apocalypse_toolkit.barbed_wire": "Barbed Wire",
     "block.apocalypse_toolkit.spikes": "Spikes",
+    "message.apocalypse_toolkit.fuse": "Fuse: %s s (let go to throw)",
+    "message.apocalypse_toolkit.fuse_hand": "Held it too long!",
     "message.apocalypse_toolkit.detonator.none": "No charges of yours within %s blocks.",
     "message.apocalypse_toolkit.detonator.armed": "%s charge(s) going off!",
     f"death.attack.{NS}.barbed_wire": "%1$s got tangled in barbed wire",

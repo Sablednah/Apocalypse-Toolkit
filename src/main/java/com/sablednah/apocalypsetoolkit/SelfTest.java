@@ -236,6 +236,22 @@ public final class SelfTest {
                 check("grenade goes off", !grenade.isAlive(), "");
             });
 
+            // ---- cooking a grenade: thrown after 2 s of its 3, and held too long ----
+            fake.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModRegistry.GRENADE.get(), 2));
+            fake.snapTo(base.getX() + 40.5, base.getY(), base.getZ() + 6.5, 0F, 0F);
+            int dur = ModRegistry.GRENADE.get().getUseDuration(fake.getMainHandItem(), fake);
+            ModRegistry.GRENADE.get().releaseUsing(fake.getMainHandItem(), level, fake, dur - 40);
+            var cooked = level.getEntitiesOfClass(GrenadeEntity.class, new net.minecraft.world.phys.AABB(fake.blockPosition()).inflate(4));
+            check("a cooked grenade flies with the fuse left", cooked.size() == 1 && cooked.get(0).tickCount == 40,
+                    cooked.isEmpty() ? "none" : "fuse at " + cooked.get(0).tickCount);
+            Monster beside = husk(level, base.offset(44, 0, 8));
+            ModRegistry.GRENADE.get().onUseTick(level, fake, fake.getMainHandItem(), dur - 60);
+            var inHand = level.getEntitiesOfClass(GrenadeEntity.class, new net.minecraft.world.phys.AABB(fake.blockPosition()).inflate(4),
+                    g -> g.tickCount == 60);
+            check("held too long, it drops at your feet spent", inHand.size() == 1 && inHand.get(0).getDeltaMovement().lengthSqr() < 0.01, inHand.size() + " found");
+            check("grenades used up", fake.getMainHandItem().isEmpty(), fake.getMainHandItem().toString());
+            fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);
+
             // ---- smoke and gas ----
             Monster blinded = husk(level, base.offset(27, 0, 6));
             blinded.setTarget(fake);

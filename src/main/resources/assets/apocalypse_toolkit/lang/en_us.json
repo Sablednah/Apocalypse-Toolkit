@@ -49,6 +49,8 @@
   "key.category.apocalypse_toolkit.toolkit": "Apocalypse Toolkit",
   "message.apocalypse_toolkit.detonator.armed": "%s charge(s) going off!",
   "message.apocalypse_toolkit.detonator.none": "No charges of yours within %s blocks.",
+  "message.apocalypse_toolkit.fuse": "Fuse: %s s (let go to throw)",
+  "message.apocalypse_toolkit.fuse_hand": "Held it too long!",
   "message.apocalypse_toolkit.no_ammo": "No %s to load.",
   "sentry.apocalypse_toolkit.mode.everything": "Everything",
   "sentry.apocalypse_toolkit.mode.hostiles": "Hostiles",

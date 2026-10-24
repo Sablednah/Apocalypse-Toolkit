@@ -21,4 +21,6 @@ First build (2026-10-24, overnight).
 - C4 charges (stick to any face, owned) and the detonator (96 blocks, rippling; blasts chain).
 - Barbed wire (drags and cuts) and spikes (hurt unless you sneak; double fall damage), with their own death messages.
 - Guns reload from backpacks and other container items (NeoForge's item capability), and from Curios slots.
-- Self-test: `./gradlew runServer -Pselftest`, 49 checks (put Sophisticated Backpacks in run/mods to test it too).
+- Cooking: fused throwables start their fuse when you press use and fly on release with what's left; too long and
+  they go off at your feet.
+- Self-test: `./gradlew runServer -Pselftest`, 52 checks (put Sophisticated Backpacks in run/mods to test it too).

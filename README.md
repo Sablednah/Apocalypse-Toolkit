@@ -25,6 +25,11 @@ into a pack.
 
 ## Throwables
 
+Grenades, pipe bombs, smoke and chemical grenades are **cooked**: press use to pull the pin (the fuse starts),
+let go to throw it with whatever fuse is left (shown on the action bar). Hold on too long and it goes off at your feet.
+A molotov is thrown on the click.
+
+
 - **Grenade**: bounces, goes off after 3 seconds. Breaks blocks only where mobs may (the mobGriefing rule, and claim
   mods that veto explosions).
 - **Molotov**: smashes and sets everything within 2.5 blocks alight; lays fire on the ground only where mobs may grief.
@@ -77,7 +82,7 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 49 checks of the mechanics
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 52 checks of the mechanics
 (firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 
