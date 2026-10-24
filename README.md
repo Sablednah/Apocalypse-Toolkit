@@ -10,7 +10,7 @@ into a pack.
 |---|---|---|---|---|---|---|
 | Pistol | 6 | 48 | 3.3/s | 12 | Pistol Rounds | |
 | SMG | 3.5 | 32 | 10/s | 30 | Pistol Rounds | automatic |
-| Shotgun | 8 x 2.5 | 16 | 1.1/s | 6 | Shotgun Shells | loads shell by shell; firing interrupts |
+| Shotgun | 8 x 3.5 | 16 | 1.1/s | 6 | Shotgun Shells | loads shell by shell; firing interrupts |
 | Rifle | 8 | 64 | 5/s | 20 | Rifle Rounds | automatic |
 | Sniper Rifle | 22 (x2 headshot) | 128 | 0.7/s | 5 | Sniper Rounds | sneak to look through the scope |
 | Laser Rifle | 12 | 96 | 2.5/s | 16 | Laser Cells | a beam, rare |

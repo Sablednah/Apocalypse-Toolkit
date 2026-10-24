@@ -27,6 +27,6 @@ First build (2026-10-24, overnight).
 - The crowbar, lead pipe, shiv and hunting bow are enchantable.
 - Enchanting: crowbar sword + pick/shovel, shiv sword (+1 Sharpness), lead pipe mace, guns crossbow (Quick Charge,
   Multishot, Piercing work), hunting bow bow.
-- Shotgun toned down: 8 x 2.5 (was 3.5), range 16 (was 20).
+- Shotgun: range 16 (was 20), and a deeper boom.
 - The pipe bomb beeps (its own synthesised beep, not a note block ding).
 - Self-test: `./gradlew runServer -Pselftest`, 60 checks (put Sophisticated Backpacks in run/mods to test it too).

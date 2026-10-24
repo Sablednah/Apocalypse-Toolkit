@@ -94,7 +94,7 @@ public final class ModRegistry {
             .damage(3.5F).range(32).cooldown(2).magazine(30).reload(40).ammo(PISTOL_ROUNDS).spread(4F).recoil(1.2F)
             .automatic().sound(SMG_SHOT).build(), Rarity.UNCOMMON);
     public static final DeferredItem<GunItem> SHOTGUN = gun("shotgun", GunSpec.builder()
-            .damage(2.5F).pellets(8).range(16).cooldown(18).magazine(6).reload(12).perRoundReload().ammo(SHOTGUN_SHELL)
+            .damage(3.5F).pellets(8).range(16).cooldown(18).magazine(6).reload(12).perRoundReload().ammo(SHOTGUN_SHELL)
             .spread(9F).recoil(7F).sound(SHOTGUN_SHOT).build(), Rarity.COMMON);
     public static final DeferredItem<GunItem> RIFLE = gun("rifle", GunSpec.builder()
             .damage(8F).range(64).cooldown(4).magazine(20).reload(45).ammo(RIFLE_ROUNDS).spread(1F).recoil(2F)
