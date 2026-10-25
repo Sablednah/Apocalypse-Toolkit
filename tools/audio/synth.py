@@ -87,6 +87,17 @@ def beep(freq=2600, length=0.075):
     e = np.ones(n); e[:edge] = np.linspace(0, 1, edge); e[-edge:] = np.linspace(1, 0, edge)
     return norm(lowpass(sq * e, 7000), 0.7)
 
+def roar(seed, length=0.45):
+    """A flamethrower: a rushing roar (low-passed noise, a little flutter) over a low rumble, soft at both ends so it
+    loops while held."""
+    rnd = np.random.default_rng(seed)
+    n = int(SR * length); tt = np.arange(n) / SR
+    rush = lowpass(rnd.standard_normal(n), 1100) * (1 + 0.25 * np.sin(2 * np.pi * 13 * tt))
+    rumble = lowpass(rnd.standard_normal(n), 140) * 1.8
+    e = np.ones(n); edge = int(SR * 0.06)
+    e[:edge] = np.linspace(0, 1, edge); e[-edge:] = np.linspace(1, 0, edge)
+    return norm((rush + rumble) * e, 0.8)
+
 def write(name, x):
     os.makedirs(OUT, exist_ok=True)
     sf.write(os.path.join(OUT, name + ".ogg"), x.astype(np.float32), SR, format="OGG", subtype="VORBIS")
@@ -110,6 +121,8 @@ def main():
     write("reload_end", place(0.5, (0.0, slide(5, 0.1, 2200)), (0.12, click(6, 2400, 0.01)), (0.3, click(7, 3000, 0.008)), (0.34, slide(8, 0.08, 2600))))
     write("shell_in", place(0.25, (0.0, slide(9, 0.06, 1500)), (0.06, click(10, 1500, 0.015, gain=0.9))))
     write("beep", place(0.12, (0.0, beep())))
+    for take in (1, 2):
+        write(f"flamethrower{take}", roar(400 + take))
     print("sounds written")
 
 if __name__ == "__main__":

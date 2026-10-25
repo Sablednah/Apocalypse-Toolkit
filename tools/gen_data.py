@@ -13,8 +13,8 @@ def w(path, obj):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=2, ensure_ascii=False); f.write("\n")
 
-GUNS = ["pistol", "smg", "shotgun", "rifle", "sniper_rifle", "laser_rifle"]
-AMMO = ["pistol_rounds", "shotgun_shell", "rifle_rounds", "sniper_round", "laser_cell"]
+GUNS = ["pistol", "smg", "shotgun", "rifle", "sniper_rifle", "laser_rifle", "flamethrower"]
+AMMO = ["pistol_rounds", "shotgun_shell", "rifle_rounds", "sniper_round", "laser_cell", "fuel_canister"]
 THROWN = ["grenade", "molotov", "pipe_bomb", "smoke_grenade", "chemical_grenade"]
 MEDICAL = ["plaster", "bandage", "medkit", "adrenaline_syringe", "antidote_syringe"]
 ns = lambda n: f"{NS}:{n}"
@@ -23,6 +23,9 @@ ns = lambda n: f"{NS}:{n}"
 for t in ("bullet", "laser"):
     w(f"{DATA}/{NS}/damage_type/{t}.json", {"exhaustion": 0.1, "message_id": f"{NS}.{t}",
                                             "scaling": "when_caused_by_living_non_player"})
+w(f"{DATA}/{NS}/damage_type/flamethrower.json", {"exhaustion": 0.1, "message_id": f"{NS}.flamethrower",
+                                              "scaling": "when_caused_by_living_non_player", "effects": "burning"})
+w(f"{DATA}/minecraft/tags/damage_type/is_fire.json", {"replace": False, "values": [ns("flamethrower")]})
 for t in ("barbed_wire", "spikes"):                 # like a cactus: no attacker, armour helps
     w(f"{DATA}/{NS}/damage_type/{t}.json", {"exhaustion": 0.1, "message_id": f"{NS}.{t}",
                                             "scaling": "when_caused_by_living_non_player"})
@@ -51,6 +54,8 @@ shaped("shotgun", ["III", "TWW"], {"I": I, "T": T, "W": W})
 shaped("rifle", ["III", "BTW"], {"I": I, "B": "minecraft:iron_block", "T": T, "W": W})
 shaped("sniper_rifle", ["SII", "BTW"], {"S": "minecraft:spyglass", "I": I, "B": "minecraft:iron_block", "T": T, "W": W})
 shaped("laser_rifle", ["DIE", "RTR"], {"D": "minecraft:diamond", "I": I, "E": "minecraft:ender_eye", "R": "minecraft:redstone_block", "T": T})
+shaped("flamethrower", ["IIF", "BT "], {"I": I, "F": "minecraft:flint_and_steel", "B": "minecraft:bucket", "T": T})
+shapeless("fuel_canister", [I, "#minecraft:coals", "#minecraft:coals", "#minecraft:coals"], 2)
 shapeless("pistol_rounds", ["minecraft:copper_ingot", "minecraft:gunpowder"], 8)
 shapeless("rifle_rounds", ["minecraft:copper_ingot", "minecraft:copper_ingot", "minecraft:gunpowder"], 8)
 shapeless("shotgun_shell", ["minecraft:paper", "minecraft:gunpowder", "minecraft:iron_nugget"], 6)
@@ -115,9 +120,9 @@ def table(name, rolls, entries, empty=0):
     w(f"{DATA}/{NS}/loot_table/chests/{name}.json", {"type": "minecraft:chest", "pools": [pool]})
 
 table("ammo_cache", (2, 4), [entry("pistol_rounds", 10, 4, 16), entry("shotgun_shell", 8, 3, 10),
-      entry("rifle_rounds", 6, 4, 12, 1), entry("sniper_round", 2, 1, 4, 2), entry("laser_cell", 1, 1, 2, 3)], 4)
+      entry("rifle_rounds", 6, 4, 12, 1), entry("sniper_round", 2, 1, 4, 2), entry("laser_cell", 1, 1, 2, 3), entry("fuel_canister", 2, 1, 2, 1)], 4)
 table("armoury", (2, 4), [entry("pistol", 6, quality=1), entry("shotgun", 4, quality=1), entry("smg", 3, quality=2),
-      entry("rifle", 2, quality=2), entry("sniper_rifle", 1, quality=3), entry("grenade", 5, 1, 3), entry("molotov", 4, 1, 3),
+      entry("rifle", 2, quality=2), entry("sniper_rifle", 1, quality=3), entry("flamethrower", 1, quality=2), entry("grenade", 5, 1, 3), entry("molotov", 4, 1, 3),
       entry("pipe_bomb", 3, 1, 2, 1), entry("smoke_grenade", 3, 1, 2), entry("chemical_grenade", 2, 1, 2, 1), entry("c4", 1, 1, 2, 3),
       entry("pistol_rounds", 8, 4, 16), entry("rifle_rounds", 5, 4, 12), entry("sentry", 1, quality=3)], 6)
 table("medical_cabinet", (1, 3), [entry("plaster", 10, 1, 4), entry("bandage", 8, 1, 4), entry("medkit", 3, quality=2),
@@ -130,7 +135,7 @@ names = {
     "rifle_rounds": "Rifle Rounds", "sniper_round": "Sniper Round", "laser_cell": "Laser Cell", "grenade": "Grenade",
     "molotov": "Molotov", "bandage": "Bandage", "medkit": "Medkit", "adrenaline_syringe": "Adrenaline Syringe",
     "antidote_syringe": "Antidote Syringe", "crowbar": "Crowbar", "lead_pipe": "Lead Pipe", "shiv": "Shiv",
-    "hunting_bow": "Hunting Bow", "plaster": "Plaster", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
+    "hunting_bow": "Hunting Bow", "plaster": "Plaster", "flamethrower": "Flamethrower", "fuel_canister": "Fuel Canister", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
     "chemical_grenade": "Chemical Grenade", "detonator": "Detonator",
 }
 lang = {f"item.{NS}.{k}": v for k, v in names.items()}
@@ -151,6 +156,10 @@ lang.update({
     "item.apocalypse_toolkit.plaster.lore": "Sticks to most things. Heals 2 hearts.",
     "message.apocalypse_toolkit.not_hurt": "You're not hurt.",
     "item.apocalypse_toolkit.crowbar.lore": "Theoretical physicist not included.",
+    "attribute.name.apocalypse_toolkit.flame_skill": "Flame Skill",
+    f"death.attack.{NS}.flamethrower": "%1$s was burnt to a crisp by %2$s",
+    f"death.attack.{NS}.flamethrower.item": "%1$s was burnt to a crisp by %2$s using %3$s",
+    f"death.attack.{NS}.flamethrower.player": "%1$s was burnt to a crisp whilst fighting %2$s",
     "message.apocalypse_toolkit.fuse": "Fuse: %s s (let go to throw)",
     "message.apocalypse_toolkit.fuse_hand": "Held it too long!",
     "message.apocalypse_toolkit.detonator.none": "No charges of yours within %s blocks.",
@@ -173,6 +182,7 @@ lang.update({
 })
 for s, text in {"gun.pistol": "Pistol fires", "gun.smg": "SMG fires", "gun.shotgun": "Shotgun fires",
                 "gun.rifle": "Rifle fires", "gun.sniper": "Sniper rifle fires", "gun.laser": "Laser fires",
+                "gun.flamethrower": "Flamethrower roars",
                 "gun.empty": "Gun clicks empty", "gun.reload_start": "Magazine out", "gun.reload_end": "Magazine in",
                 "gun.shell_in": "Shell loaded", "pipe_bomb.beep": "Pipe bomb beeps"}.items():
     lang[f"subtitles.{NS}.{s}"] = text
@@ -184,6 +194,7 @@ SOUNDS = {
     "gun.pistol": (["gun/pistol1", "gun/pistol2"], 48), "gun.smg": (["gun/smg1", "gun/smg2"], 48),
     "gun.shotgun": (["gun/shotgun1", "gun/shotgun2"], 64), "gun.rifle": (["gun/rifle1", "gun/rifle2"], 64),
     "gun.sniper": (["gun/sniper1", "gun/sniper2"], 96), "gun.laser": (["gun/laser1", "gun/laser2"], 32),
+    "gun.flamethrower": (["gun/flamethrower1", "gun/flamethrower2"], 24),
     "gun.empty": (["gun/empty"], 12), "gun.reload_start": (["gun/reload_start"], 12),
     "gun.reload_end": (["gun/reload_end"], 12), "gun.shell_in": (["gun/shell_in"], 12),
     "pipe_bomb.beep": (["gun/beep"], 24),

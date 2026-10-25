@@ -29,4 +29,5 @@ First build (2026-10-24, overnight).
   Multishot, Piercing work), hunting bow bow.
 - Shotgun: range 16 (was 20), and a deeper boom.
 - The pipe bomb beeps (its own synthesised beep, not a note block ding).
-- Self-test: `./gradlew runServer -Pselftest`, 60 checks (put Sophisticated Backpacks in run/mods to test it too).
+- Flamethrower and fuel canisters; the Flame Skill attribute (range, damage, burn time, fuel economy).
+- Self-test: `./gradlew runServer -Pselftest`, 68 checks (put Sophisticated Backpacks in run/mods to test it too).

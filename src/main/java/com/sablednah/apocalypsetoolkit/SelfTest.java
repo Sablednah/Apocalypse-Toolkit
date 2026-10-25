@@ -85,7 +85,7 @@ public final class SelfTest {
             var bullet = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(GunItem.BULLET);
             check("bullet damage is projectile damage", bullet.is(DamageTypeTags.IS_PROJECTILE), "");
             for (String r : new String[] { "pistol", "shotgun", "sniper_rifle", "pistol_rounds", "grenade", "medkit", "sentry", "sprung", "crowbar",
-                    "hunting_bow", "pipe_bomb", "smoke_grenade", "chemical_grenade", "c4", "detonator", "barbed_wire", "spikes", "plaster" })
+                    "hunting_bow", "flamethrower", "fuel_canister", "pipe_bomb", "smoke_grenade", "chemical_grenade", "c4", "detonator", "barbed_wire", "spikes", "plaster" })
                 check("recipe " + r, server.getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE,
                         Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, r))).isPresent(), "");
             ItemStack crowbar = new ItemStack(ModRegistry.CROWBAR.get());
@@ -157,6 +157,38 @@ public final class SelfTest {
             ModRegistry.PISTOL.get().startReload(level, fake, quick);
             long took = quick.getOrDefault(ModRegistry.RELOAD_UNTIL.get(), 0L) - level.getGameTime();
             check("Quick Charge shortens a reload", took == Math.round(ModRegistry.PISTOL.get().spec().reload() * 0.4F), took + " ticks");
+            fake.getInventory().clearContent();
+            fake.setItemInHand(InteractionHand.MAIN_HAND, pistol);
+
+            // ---- the flamethrower: reach, fire, fuel, and flame skill ----
+            fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);
+            Monster close = husk(level, base.offset(4, 0, 0)), far8 = husk(level, base.offset(8, 0, 1));
+            far8.snapTo(base.getX() + 8.5, base.getY(), base.getZ() + 0.5, 90F, 0F);
+            ItemStack flamer = new ItemStack(ModRegistry.FLAMETHROWER.get());
+            flamer.set(ModRegistry.LOADED.get(), 100);
+            fake.setItemInHand(InteractionHand.MAIN_HAND, flamer);
+            float fc0 = close.getHealth(), ff0 = far8.getHealth();
+            for (int i = 0; i < 20; i++) com.sablednah.apocalypsetoolkit.gun.Flames.burstForTest(level, fake, flamer, ModRegistry.FLAMETHROWER.get());
+            check("flamethrower burns what's in front", close.getHealth() < fc0 && close.isOnFire(), fc0 + " -> " + close.getHealth() + ", on fire " + close.isOnFire());
+            check("flamethrower's reach is short", far8.getHealth() == ff0, "far " + far8.getHealth());
+            int plainUse = 100 - GunItem.loaded(flamer);
+            check("flamethrower burns fuel", plainUse == 20, "used " + plainUse);
+            var attr = fake.getAttribute(ModRegistry.FLAME_SKILL);
+            attr.setBaseValue(1.0);
+            flamer.set(ModRegistry.LOADED.get(), 100);
+            for (int i = 0; i < 200; i++) com.sablednah.apocalypsetoolkit.gun.Flames.burstForTest(level, fake, flamer, ModRegistry.FLAMETHROWER.get());
+            int skilledUse = 100 - GunItem.loaded(flamer);
+            check("flame skill: fuel lasts about twice as long", skilledUse > 70 && skilledUse < 130, "used " + skilledUse + " in 200 bursts");
+            check("flame skill: reach goes further", far8.getHealth() < ff0, "far " + ff0 + " -> " + far8.getHealth());
+            attr.setBaseValue(0.0);
+            close.discard(); far8.discard();
+            flamer.set(ModRegistry.LOADED.get(), 7);
+            fake.getInventory().setItem(9, new ItemStack(ModRegistry.FUEL_CANISTER.get(), 3));
+            ModRegistry.FLAMETHROWER.get().startReload(level, fake, flamer);
+            flamer.set(ModRegistry.RELOAD_UNTIL.get(), 0L);
+            ModRegistry.FLAMETHROWER.get().inventoryTick(flamer, level, fake, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+            check("one canister fills the tank", GunItem.loaded(flamer) == 100 && fake.getInventory().getItem(9).getCount() == 2,
+                    "fuel " + GunItem.loaded(flamer) + ", canisters " + fake.getInventory().getItem(9).getCount());
             fake.getInventory().clearContent();
             fake.setItemInHand(InteractionHand.MAIN_HAND, pistol);
 

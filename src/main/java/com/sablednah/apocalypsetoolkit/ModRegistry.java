@@ -46,6 +46,12 @@ public final class ModRegistry {
     private static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ID);
     private static final DeferredRegister<net.minecraft.world.inventory.MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, ID);
+    private static final DeferredRegister<net.minecraft.world.entity.ai.attributes.Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, ID);
+
+    /** How good someone is with a flamethrower (0 for most): see {@code gun/Flames}. A pack hands its fire specialists more. */
+    public static final DeferredHolder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.Attribute> FLAME_SKILL =
+            ATTRIBUTES.register("flame_skill", () -> new net.minecraft.world.entity.ai.attributes.RangedAttribute(
+                    "attribute.name.apocalypse_toolkit.flame_skill", 0.0, 0.0, 10.0).setSyncable(true));
 
     /** Every item in tab order. */
     private static final List<DeferredItem<? extends Item>> ORDER = new ArrayList<>();
@@ -67,6 +73,7 @@ public final class ModRegistry {
     public static final DeferredHolder<SoundEvent, SoundEvent> RIFLE_SHOT = sound("gun.rifle");
     public static final DeferredHolder<SoundEvent, SoundEvent> SNIPER_SHOT = sound("gun.sniper");
     public static final DeferredHolder<SoundEvent, SoundEvent> LASER_SHOT = sound("gun.laser");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLAME_ROAR = sound("gun.flamethrower");
     public static final DeferredHolder<SoundEvent, SoundEvent> DRY_FIRE = sound("gun.empty");
     public static final DeferredHolder<SoundEvent, SoundEvent> RELOAD_START = sound("gun.reload_start");
     public static final DeferredHolder<SoundEvent, SoundEvent> RELOAD_END = sound("gun.reload_end");
@@ -84,6 +91,7 @@ public final class ModRegistry {
     public static final DeferredItem<Item> RIFLE_ROUNDS = item("rifle_rounds", p -> p);
     public static final DeferredItem<Item> SNIPER_ROUND = item("sniper_round", p -> p);
     public static final DeferredItem<Item> LASER_CELL = item("laser_cell", p -> p.stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> FUEL_CANISTER = item("fuel_canister", p -> p.stacksTo(16));
 
     // ---- guns ---------------------------------------------------------------------------------
 
@@ -105,6 +113,10 @@ public final class ModRegistry {
     public static final DeferredItem<GunItem> LASER_RIFLE = gun("laser_rifle", GunSpec.builder()
             .damage(12F).range(96).cooldown(8).magazine(16).reload(50).ammo(LASER_CELL).spread(0F).recoil(0.5F)
             .laser().sound(LASER_SHOT).build(), Rarity.EPIC);
+    /** A stream of fire, held: 2.5 a burst (twice a second, as hurt time allows) and burning, out to 6 blocks; a canister fills the tank. */
+    public static final DeferredItem<GunItem> FLAMETHROWER = gun("flamethrower", GunSpec.builder()
+            .damage(2.5F).headshot(1F).range(6).cooldown(2).magazine(100).ammoPer(100).reload(40).ammo(FUEL_CANISTER)
+            .spread(0F).recoil(0F).automatic().flame().sound(FLAME_ROAR).build(), Rarity.UNCOMMON);
 
     private static DeferredItem<GunItem> gun(String name, GunSpec spec, Rarity rarity) {
         DeferredItem<GunItem> it = ITEMS.registerItem(name, p -> new GunItem(p, spec), p -> p.stacksTo(1).rarity(rarity).enchantable(10));
@@ -276,6 +288,9 @@ public final class ModRegistry {
 
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);
+        ATTRIBUTES.register(modBus);
+        modBus.addListener((net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent e) ->
+                e.add(net.minecraft.world.entity.EntityTypes.PLAYER, FLAME_SKILL));
         ITEMS.register(modBus);
         BLOCK_ENTITIES.register(modBus);
         MENUS.register(modBus);

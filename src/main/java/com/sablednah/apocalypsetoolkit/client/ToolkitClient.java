@@ -43,7 +43,7 @@ public final class ToolkitClient {
                         return net.minecraft.client.model.HumanoidModel.ArmPose.CROSSBOW_HOLD;
                     }
                 }, ModRegistry.PISTOL.get(), ModRegistry.SMG.get(), ModRegistry.SHOTGUN.get(), ModRegistry.RIFLE.get(),
-                ModRegistry.SNIPER_RIFLE.get(), ModRegistry.LASER_RIFLE.get()));
+                ModRegistry.SNIPER_RIFLE.get(), ModRegistry.LASER_RIFLE.get(), ModRegistry.FLAMETHROWER.get()));
         modBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> {
             e.registerEntityRenderer(ModRegistry.GRENADE_ENTITY.get(), ThrownItemRenderer::new);
             e.registerEntityRenderer(ModRegistry.MOLOTOV_ENTITY.get(), ThrownItemRenderer::new);

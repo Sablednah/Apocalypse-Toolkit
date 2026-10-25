@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "#minecraft:coals",
+    "#minecraft:coals",
+    "#minecraft:coals"
+  ],
+  "result": {
+    "id": "apocalypse_toolkit:fuel_canister",
+    "count": 2
+  }
+}

@@ -40,6 +40,12 @@
         },
         {
           "type": "minecraft:item",
+          "name": "apocalypse_toolkit:flamethrower",
+          "weight": 1,
+          "quality": 2
+        },
+        {
+          "type": "minecraft:item",
           "name": "apocalypse_toolkit:grenade",
           "weight": 5,
           "functions": [

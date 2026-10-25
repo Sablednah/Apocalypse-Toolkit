@@ -22,11 +22,13 @@ import net.minecraft.world.item.Item;
  * @param automatic fires for as long as use is held
  * @param zoom      field-of-view multiplier while sneaking with it (1 = none)
  * @param laser     a beam, not a bullet: a red line, no shell, its own damage type
+ * @param flame     a flamethrower: a cone of fire out to {@code range} instead of bullets, held to keep it going
+ * @param ammoPer   how much of the magazine one ammo item fills (a fuel canister fills a whole tank)
  * @param sound     the shot
  */
 public record GunSpec(float damage, float headshot, int pellets, int range, int cooldown, int magazine, int reload,
         boolean perRound, Supplier<Item> ammo, float spread, float recoil, boolean automatic, float zoom, boolean laser,
-        Supplier<SoundEvent> sound) {
+        boolean flame, int ammoPer, Supplier<SoundEvent> sound) {
 
     public static Builder builder() {
         return new Builder();
@@ -35,7 +37,8 @@ public record GunSpec(float damage, float headshot, int pellets, int range, int 
     public static final class Builder {
         private float damage = 5F, headshot = 1.5F, spread = 2F, recoil = 2F, zoom = 1F;
         private int pellets = 1, range = 48, cooldown = 8, magazine = 10, reload = 30;
-        private boolean perRound, automatic, laser;
+        private boolean perRound, automatic, laser, flame;
+        private int ammoPer = 1;
         private Supplier<Item> ammo;
         private Supplier<SoundEvent> sound;
 
@@ -53,11 +56,13 @@ public record GunSpec(float damage, float headshot, int pellets, int range, int 
         public Builder automatic() { automatic = true; return this; }
         public Builder zoom(float v) { zoom = v; return this; }
         public Builder laser() { laser = true; return this; }
+        public Builder flame() { flame = true; return this; }
+        public Builder ammoPer(int v) { ammoPer = v; return this; }
         public Builder sound(Supplier<? extends SoundEvent> v) { sound = v::get; return this; }
 
         public GunSpec build() {
             return new GunSpec(damage, headshot, pellets, range, cooldown, magazine, reload, perRound, ammo, spread, recoil,
-                    automatic, zoom, laser, sound);
+                    automatic, zoom, laser, flame, ammoPer, sound);
         }
     }
 }

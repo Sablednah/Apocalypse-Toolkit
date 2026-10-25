@@ -127,6 +127,10 @@ public class GunItem extends Item {
             player.setYRot(player.getYRot() + (player.getRandom().nextFloat() - 0.5F) * kick * 0.4F);
             return;
         }
+        if (spec.flame()) {
+            Flames.burst(server, player, stack, this);
+            return;
+        }
         if (!player.isCreative()) stack.set(ModRegistry.LOADED.get(), loaded(stack) - 1);
         RandomSource r = server.getRandom();
         float volume = spec.zoom() < 1F ? 4F : spec.laser() ? 1.2F : 2.5F;
@@ -237,7 +241,9 @@ public class GunItem extends Item {
             }
         } else {
             int need = spec.magazine() - loaded;
-            stack.set(ModRegistry.LOADED.get(), loaded + (player.isCreative() ? need : take(player, need)));
+            int items = (need + spec.ammoPer() - 1) / spec.ammoPer();            // a canister fills a whole tank
+            int got = player.isCreative() ? need : Math.min(need, take(player, items) * spec.ammoPer());
+            stack.set(ModRegistry.LOADED.get(), loaded + got);
         }
         stack.remove(ModRegistry.RELOAD_UNTIL.get());
         level.playSound(null, player.blockPosition(), ModRegistry.RELOAD_END.get(), SoundSource.PLAYERS, 0.9F, 1.0F);

@@ -84,6 +84,18 @@ GUNS = {
         ((-5, 6.5, 7.2), (0, 9.8, 8.8), WHITE),      # stock
         ((5, 6, 7.6), (11, 7, 8.4), RED),            # under-glow strip
     ],
+    "flamethrower": [
+        ((0, 8, 7.3), (10, 10, 8.7), DARK),          # body
+        ((10, 8.4, 7.6), (17, 9.6, 8.4), METAL),     # nozzle pipe
+        ((16, 8.1, 7.4), (17.5, 9.9, 8.6), BLACK),   # nozzle tip
+        ((17, 7.4, 7.8), (17.6, 8.1, 8.2), BRASS),   # pilot light
+        ((1, 4, 6.8), (8, 8, 9.2), RED),             # fuel tank
+        ((1.5, 4.4, 6.7), (7.5, 4.8, 9.3), DRED),    # tank band
+        ((8, 4.5, 7.6), (9.5, 8, 8.4), BRASS),       # fuel line
+        ((2, 2.5, 7.4), (4, 4, 8.6), GRIP),          # rear grip
+        ((11, 5.5, 7.5), (12.5, 8.4, 8.5), GRIP),    # front grip
+        ((-3, 8.2, 7.6), (0, 9.8, 8.4), METAL),      # stock bar
+    ],
 }
 DISPLAY = {
     "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [0, 2, 1], "scale": [0.6, 0.6, 0.6]},

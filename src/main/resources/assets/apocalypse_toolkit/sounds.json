@@ -77,6 +77,19 @@
       }
     ]
   },
+  "gun.flamethrower": {
+    "subtitle": "subtitles.apocalypse_toolkit.gun.flamethrower",
+    "sounds": [
+      {
+        "name": "apocalypse_toolkit:gun/flamethrower1",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "apocalypse_toolkit:gun/flamethrower2",
+        "attenuation_distance": 24
+      }
+    ]
+  },
   "gun.empty": {
     "subtitle": "subtitles.apocalypse_toolkit.gun.empty",
     "sounds": [

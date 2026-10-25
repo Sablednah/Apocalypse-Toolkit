@@ -166,12 +166,21 @@ def detonator():
     rect(px, 10, 1, 10, 5, (40, 40, 44)); px[10, 0] = (200, 40, 36, 255)                                # aerial
     return outline(im)
 
+def fuel_canister():
+    im, px = canvas()
+    red, lit, dark = (178, 38, 30), (220, 80, 64), (120, 24, 18)
+    rect(px, 3, 4, 12, 14, red); rect(px, 3, 4, 3, 14, lit); rect(px, 12, 4, 12, 14, dark); rect(px, 3, 14, 12, 14, dark)
+    for i in range(5): px[5 + i, 6 + i] = dark + (255,); px[10 - i, 6 + i] = dark + (255,)   # the pressed X
+    rect(px, 4, 2, 8, 3, (60, 60, 64)); rect(px, 5, 2, 7, 2, (90, 90, 96))                     # handle
+    rect(px, 10, 1, 11, 3, (196, 164, 80))                                                    # spout cap
+    return outline(im)
+
 SPRITES = {
     "pistol_rounds": pistol_rounds, "rifle_rounds": rifle_rounds, "sniper_round": sniper_round,
     "shotgun_shell": shotgun_shell, "laser_cell": laser_cell, "grenade": grenade, "molotov": molotov,
     "bandage": bandage, "medkit": medkit,
     "adrenaline_syringe": lambda: syringe((230, 200, 60)), "antidote_syringe": lambda: syringe((90, 200, 120)),
-    "pipe_bomb": pipe_bomb, "smoke_grenade": smoke_grenade, "chemical_grenade": chemical_grenade, "detonator": detonator,
+    "fuel_canister": fuel_canister, "pipe_bomb": pipe_bomb, "smoke_grenade": smoke_grenade, "chemical_grenade": chemical_grenade, "detonator": detonator,
 }
 
 def write(path, obj):
