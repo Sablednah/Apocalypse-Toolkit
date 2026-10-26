@@ -135,6 +135,16 @@ public final class SelfTest {
             check("sprung recipe: a gate and the material", crafts, "");
             check("sprung material is a tag", new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET).is(com.sablednah.apocalypsetoolkit.sprung.Sprung.MATERIAL), "");
 
+            // ---- a pack's item string for a loaded gun (ZARP's Winchester frame), as CityWorld parses it ----
+            String frameItem = "apocalypse_toolkit:shotgun[apocalypse_toolkit:loaded=6,minecraft:lore=[{text:\"It's loaded. Ed won the bet.\",color:\"dark_gray\",italic:true}]]";
+            try {
+                ItemStack framed = new net.minecraft.commands.arguments.item.ItemParser(level.registryAccess())
+                        .parse(new com.mojang.brigadier.StringReader(frameItem)).createItemStack(1);
+                check("item string parses (a loaded shotgun)", framed.is(ModRegistry.SHOTGUN.get()) && GunItem.loaded(framed) == 6, framed.toString());
+            } catch (Exception ex) {
+                check("item string parses (a loaded shotgun)", false, ex.getMessage());
+            }
+
             // ---- firing ----
             Monster target = husk(level, base.offset(6, 0, 0));
             fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);   // facing east, at the husk
