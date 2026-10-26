@@ -125,6 +125,16 @@ public final class SelfTest {
                     && !in.test(ModRegistry.LEAD_PIPE.get(), "sharp_weapon") && in.test(ModRegistry.RIFLE.get(), "crossbow")
                     && in.test(ModRegistry.HUNTING_BOW.get(), "bow"), "");
 
+            // ---- sprung: the recipe takes the material tag ----
+            var sprungRecipe = server.getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE,
+                    Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "sprung")));
+            boolean crafts = sprungRecipe.isPresent() && sprungRecipe.get().value() instanceof net.minecraft.world.item.crafting.CraftingRecipe cr
+                    && cr instanceof com.sablednah.apocalypsetoolkit.sprung.SprungRecipe sr
+                    && sr.matches(net.minecraft.world.item.crafting.CraftingInput.of(2, 1, java.util.List.of(
+                            new ItemStack(net.minecraft.world.item.Items.OAK_FENCE_GATE), new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET))), level);
+            check("sprung recipe: a gate and the material", crafts, "");
+            check("sprung material is a tag", new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET).is(com.sablednah.apocalypsetoolkit.sprung.Sprung.MATERIAL), "");
+
             // ---- firing ----
             Monster target = husk(level, base.offset(6, 0, 0));
             fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);   // facing east, at the husk

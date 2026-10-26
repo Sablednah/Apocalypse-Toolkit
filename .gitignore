@@ -11,3 +11,4 @@ out/
 
 tools/audio/.venv/
 __pycache__/
+/libs/

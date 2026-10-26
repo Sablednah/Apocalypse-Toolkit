@@ -74,7 +74,8 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 - **Lead Pipe** (slow, heavy) and **Shiv** (fast, light). Enchanting: the crowbar takes sword and pickaxe/shovel enchantments; the shiv a sword's (Sharpness counts one
   level higher on it); the lead pipe a mace's (Density, Breach, Wind Burst); the hunting bow a bow's.
 - **Hunting Bow**: arrows fly 25% faster, twice as true, and hit 40% harder.
-- **Sprung doors, trapdoors and gates**: craft any of them with an iron nugget; it swings shut a second after you
+- **Sprung doors, trapdoors and gates**: craft any of them with an iron nugget (`#apocalypse_toolkit:sprung_material`; JEI lists
+  every one, and the creative tab has them all); it swings shut a second after you
   go through, waits while someone stands in it, and leaves redstone-powered ones alone.
 
 ## For packs
@@ -88,7 +89,7 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 68 checks of the mechanics
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 70 checks of the mechanics
 (firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 

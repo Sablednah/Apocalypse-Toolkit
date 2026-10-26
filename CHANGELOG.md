@@ -30,4 +30,6 @@ First build (2026-10-24, overnight).
 - Shotgun: range 16 (was 20), and a deeper boom.
 - The pipe bomb beeps (its own synthesised beep, not a note block ding).
 - Flamethrower and fuel canisters; the Flame Skill attribute (range, damage, burn time, fuel economy).
-- Self-test: `./gradlew runServer -Pselftest`, 68 checks (put Sophisticated Backpacks in run/mods to test it too).
+- Sprung doors, trapdoors and gates in the creative tab and in JEI (one crafting recipe each); the material is the
+  `#apocalypse_toolkit:sprung_material` tag.
+- Self-test: `./gradlew runServer -Pselftest`, 70 checks (put Sophisticated Backpacks in run/mods to test it too).

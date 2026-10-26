@@ -83,6 +83,9 @@ def compileJar(String dir, String prefix) {
 }
 
 dependencies {
+    // JEI: shows the sprung recipes (compile only; the plugin loads only when JEI is installed). libs/ is git-ignored:
+    // copy JEI's 26.2 jar there to build.
+    compileOnly fileTree(dir: 'libs', include: 'jei-*.jar')
 }
 
 

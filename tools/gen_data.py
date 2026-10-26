@@ -79,7 +79,9 @@ shapeless("antidote_syringe", ["minecraft:glass_bottle", "minecraft:honeycomb", 
 
 # sprung doors, trapdoors and gates: any of them plus an iron nugget (a pack swaps the material)
 w(f"{DATA}/{NS}/tags/item/sprungable.json", {"values": ["#minecraft:doors", "#minecraft:trapdoors", "#minecraft:fence_gates"]})
-w(f"{DATA}/{NS}/recipe/sprung.json", {"type": ns("sprung"), "item": f"#{NS}:sprungable", "material": "minecraft:iron_nugget"})
+# the material is a tag, so a pack can swap it (ZARP: scrap) and JEI, which only sees tags on a client, shows the right one
+w(f"{DATA}/{NS}/tags/item/sprung_material.json", {"values": ["minecraft:iron_nugget"]})
+w(f"{DATA}/{NS}/recipe/sprung.json", {"type": ns("sprung"), "item": f"#{NS}:sprungable", "material": f"#{NS}:sprung_material"})
 
 # improvised gear
 w(f"{DATA}/{NS}/tags/block/crowbar_mineable.json", {"values": [

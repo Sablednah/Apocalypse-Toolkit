@@ -98,6 +98,19 @@ public final class Sprung {
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.server.ServerStoppedEvent e) -> PENDING.clear());
     }
 
+    /** What can be sprung, and what it takes (item tags, so a pack can change either and JEI sees it on a client). */
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> SPRUNGABLE_ITEMS = net.minecraft.tags.TagKey.create(
+            net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "sprungable"));
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> MATERIAL = net.minecraft.tags.TagKey.create(
+            net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "sprung_material"));
+
+    /** A sprung one of this door, trapdoor or gate. */
+    public static ItemStack sprung(net.minecraft.world.item.Item item) {
+        ItemStack stack = new ItemStack(item);
+        stack.set(SPRUNG.get(), Unit.INSTANCE);
+        return stack;
+    }
+
     public static boolean sprungable(BlockState state) {
         return (state.is(BlockTags.FENCE_GATES) || state.is(BlockTags.DOORS) || state.is(BlockTags.TRAPDOORS))
                 && state.hasProperty(BlockStateProperties.OPEN);

@@ -282,6 +282,9 @@ public final class ModRegistry {
                         if (it.get() instanceof GunItem gun) stack.set(LOADED.get(), gun.spec().magazine());
                         out.accept(stack);
                     }
+                    // a sprung one of every door, trapdoor and fence gate there is (modded woods too)
+                    params.holders().lookupOrThrow(Registries.ITEM).get(com.sablednah.apocalypsetoolkit.sprung.Sprung.SPRUNGABLE_ITEMS)
+                            .ifPresent(set -> set.forEach(h -> out.accept(com.sablednah.apocalypsetoolkit.sprung.Sprung.sprung(h.value()))));
                 })
                 .build());
     }
