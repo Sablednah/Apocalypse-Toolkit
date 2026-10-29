@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:pistol"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.headshot.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.headshot.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "apocalypse_toolkit:feats/root",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

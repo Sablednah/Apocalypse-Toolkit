@@ -211,6 +211,7 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         DamageSource source = by != null ? new DamageSource(type, by) : new DamageSource(type, muzzle);
         t.invulnerableTime = 0;
         t.hurtServer(level, source, damage);
+        if (by != null && t.isDeadOrDying()) com.sablednah.apocalypsetoolkit.feats.Feats.award(by, "sentry_duty");
         level.playSound(null, muzzle.x, muzzle.y, muzzle.z, ModRegistry.SMG_SHOT.get(), SoundSource.BLOCKS, 1.5F, 1.1F);
         Vec3 dir = t.getEyePosition().subtract(muzzle).normalize();
         Vec3 flash = muzzle.add(dir.scale(0.6));

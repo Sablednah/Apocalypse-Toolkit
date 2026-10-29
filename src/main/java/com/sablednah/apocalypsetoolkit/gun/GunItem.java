@@ -140,12 +140,23 @@ public class GunItem extends Item {
         server.sendParticles(spec.laser() ? ParticleTypes.END_ROD : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
                 spec.laser() ? 1 : 3, 0.02, 0.02, 0.02, 0.01);
         int pierce = 1 + level(server, stack, net.minecraft.world.item.enchantment.Enchantments.PIERCING);
-        for (int i = 0; i < spec.pellets(); i++) ray(server, player, r, 0F, pierce);
+        var tally = new com.sablednah.apocalypsetoolkit.feats.Feats.Shot();
+        for (int i = 0; i < spec.pellets(); i++) ray(server, player, r, 0F, pierce, tally);
         if (level(server, stack, net.minecraft.world.item.enchantment.Enchantments.MULTISHOT) > 0) {
             int extra = spec.pellets() > 1 ? 2 : 1;                  // two more shots, either side (a shotgun: two more pellets each)
-            for (int i = 0; i < extra; i++) { ray(server, player, r, -MULTISHOT_ANGLE, pierce); ray(server, player, r, MULTISHOT_ANGLE, pierce); }
+            for (int i = 0; i < extra; i++) { ray(server, player, r, -MULTISHOT_ANGLE, pierce, tally); ray(server, player, r, MULTISHOT_ANGLE, pierce, tally); }
+        }
+        com.sablednah.apocalypsetoolkit.feats.Feats.shot(player, this, tally);
+        // Spray and Pray: a full SMG magazine emptied in one held burst
+        if (this == ModRegistry.SMG.get()) {
+            if (!player.isUsingItem() || player.getTicksUsingItem() <= spec.cooldown()) SPRAY_FULL.put(player.getUUID(), loaded(stack) + 1 >= spec.magazine());
+            if (loaded(stack) <= 0 && Boolean.TRUE.equals(SPRAY_FULL.remove(player.getUUID())))
+                com.sablednah.apocalypsetoolkit.feats.Feats.award(player, "spray_and_pray");
         }
     }
+
+    /** Whether the SMG burst a player is holding began on a full magazine (Spray and Pray). */
+    private static final java.util.Map<java.util.UUID, Boolean> SPRAY_FULL = new java.util.HashMap<>();
 
     /** Crossbow enchantments on a gun: Quick Charge reloads faster, Multishot fires two more shots either side, Piercing
      * goes through one more target a level. */
@@ -162,7 +173,7 @@ public class GunItem extends Item {
         return Math.max(Math.max(1, spec.reload() / 4), Math.round(spec.reload() * (1F - QUICK_CHARGE * qc)));
     }
 
-    private void ray(ServerLevel level, Player player, RandomSource r, float yawOffset, int pierce) {
+    private void ray(ServerLevel level, Player player, RandomSource r, float yawOffset, int pierce, com.sablednah.apocalypsetoolkit.feats.Feats.Shot tally) {
         boolean aimed = player.isShiftKeyDown();
         float spread = spec.zoom() < 1F && aimed ? 0F : spec.spread() * (aimed ? 0.5F : 1F);
         float yaw = player.getYRot() + yawOffset + (r.nextFloat() - 0.5F) * 2F * spread;
@@ -183,9 +194,16 @@ public class GunItem extends Item {
                 Entity target = hits.get(i).getKey();
                 stop = hits.get(i).getValue();
                 float damage = spec.damage();
-                if (target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.15) damage *= spec.headshot();
+                boolean head = target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.15;
+                if (head) damage *= spec.headshot();
+                boolean alive = target.isAlive(), full = target instanceof LivingEntity l && l.getHealth() >= l.getMaxHealth();
                 target.invulnerableTime = 0;                       // every pellet of a shotgun blast counts
                 target.hurtServer(level, source(level, player), damage);
+                if (alive && target instanceof LivingEntity dead && dead.isDeadOrDying()) {
+                    tally.kills++;
+                    if (head) tally.headshotKills++;
+                    if (full) tally.oneShotKills++;
+                }
                 level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, stop.x, stop.y, stop.z, 2, 0.1, 0.1, 0.1, 0.05);
             }
             if (pierce > hits.size()) stop = wall;                 // went through them all, on to the wall

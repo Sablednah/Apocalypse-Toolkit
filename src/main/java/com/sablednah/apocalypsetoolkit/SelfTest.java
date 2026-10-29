@@ -145,6 +145,13 @@ public final class SelfTest {
                 check("item string parses (a loaded shotgun)", false, ex.getMessage());
             }
 
+            // ---- feats: the achievement tab loads, all of it ----
+            int feats = 0;
+            for (String f : new String[] { "root", "headshot", "three_for_one", "one_shot_one_kill", "long_shot", "laser_show", "spray_and_pray",
+                    "barbecue", "fragged", "controlled_demolition", "sentry_duty", "hold_the_line", "patched_up" })
+                if (server.getAdvancements().get(Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "feats/" + f)) != null) feats++;
+            check("feats: all 13 advancements load", feats == 13, feats + " of 13");
+
             // ---- firing ----
             Monster target = husk(level, base.offset(6, 0, 0));
             fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);   // facing east, at the husk

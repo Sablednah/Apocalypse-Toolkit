@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:barbed_wire"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.hold_the_line.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.hold_the_line.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "apocalypse_toolkit:feats/sentry_duty",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

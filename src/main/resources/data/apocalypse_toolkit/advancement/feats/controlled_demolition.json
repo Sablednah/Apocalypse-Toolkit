@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:detonator"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.controlled_demolition.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.controlled_demolition.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "apocalypse_toolkit:feats/fragged",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

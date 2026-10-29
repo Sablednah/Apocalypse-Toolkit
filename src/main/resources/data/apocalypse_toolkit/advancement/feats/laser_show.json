@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:laser_rifle"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.laser_show.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.laser_show.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "apocalypse_toolkit:feats/headshot",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:sniper_round"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.long_shot.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.long_shot.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "apocalypse_toolkit:feats/one_shot_one_kill",
+  "criteria": {
+    "long": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:distance": {
+                "horizontal": {
+                  "min": 100.0
+                }
+              }
+            }
+          }
+        ],
+        "killing_blow": {
+          "tags": [
+            {
+              "id": "apocalypse_toolkit:gunfire",
+              "expected": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

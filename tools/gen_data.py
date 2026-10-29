@@ -130,6 +130,42 @@ table("armoury", (2, 4), [entry("pistol", 6, quality=1), entry("shotgun", 4, qua
 table("medical_cabinet", (1, 3), [entry("plaster", 10, 1, 4), entry("bandage", 8, 1, 4), entry("medkit", 3, quality=2),
       entry("adrenaline_syringe", 3, quality=1), entry("antidote_syringe", 4)], 5)
 
+# feats: the Toolkit's advancement tab. Most are awarded by code (feats/Feats.java: "minecraft:impossible" here);
+# Long Shot and Barbecue are vanilla's player_killed_entity, checked against these damage tags.
+w(f"{DATA}/{NS}/tags/damage_type/gunfire.json", {"values": [ns("bullet"), ns("laser")]})
+w(f"{DATA}/{NS}/tags/damage_type/flame.json", {"values": [ns("flamethrower")]})
+FEATS = [  # name, icon, parent, frame, title, description, criteria (None = awarded by code)
+    ("root", "pistol", None, "task", "Apocalypse Toolkit", "Arm yourself.",
+     {"armed": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": f"#{NS}:guns"}]}}}),
+    ("headshot", "pistol", "root", "task", "Headshot", "Kill something with a shot to the head.", None),
+    ("three_for_one", "shotgun", "headshot", "challenge", "Three for One", "Kill three things with a single shotgun blast.", None),
+    ("one_shot_one_kill", "sniper_rifle", "headshot", "goal", "One Shot, One Kill", "Kill something from full health with one sniper round.", None),
+    ("long_shot", "sniper_round", "one_shot_one_kill", "challenge", "Long Shot", "Kill something with a gun from 100 blocks away.",
+     {"long": {"trigger": "minecraft:player_killed_entity", "conditions": {
+         "entity": [{"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"minecraft:distance": {"horizontal": {"min": 100.0}}}}],
+         "killing_blow": {"tags": [{"id": f"{NS}:gunfire", "expected": True}]}}}}),
+    ("laser_show", "laser_rifle", "headshot", "challenge", "Laser Show", "Kill two things with one beam of the laser rifle.", None),
+    ("spray_and_pray", "smg", "root", "task", "Spray and Pray", "Empty a full SMG magazine in one burst.", None),
+    ("barbecue", "flamethrower", "root", "goal", "Barbecue", "Kill something with a flamethrower.",
+     {"flame": {"trigger": "minecraft:player_killed_entity", "conditions": {"killing_blow": {"tags": [{"id": f"{NS}:flame", "expected": True}]}}}}),
+    ("fragged", "grenade", "root", "goal", "Fragged", "Kill three things with one grenade or pipe bomb.", None),
+    ("controlled_demolition", "detonator", "fragged", "challenge", "Controlled Demolition", "Set off three or more C4 charges at once.", None),
+    ("sentry_duty", "sentry", "root", "task", "Sentry Duty", "Let your sentry turret make a kill.", None),
+    ("hold_the_line", "barbed_wire", "sentry_duty", "goal", "Hold the Line", "See something die on barbed wire or spikes.", None),
+    ("patched_up", "medkit", "root", "task", "Patched Up", "Use a medkit with two hearts or less.", None),
+]
+for name, icon, parent, frame, title, desc, crit in FEATS:
+    adv = {"display": {"icon": {"id": ns(icon)}, "title": {"translate": f"advancements.{NS}.{name}.title"},
+                       "description": {"translate": f"advancements.{NS}.{name}.description"}, "frame": frame,
+                       "show_toast": True, "announce_to_chat": True}}
+    if parent is None:
+        adv["display"]["background"] = "minecraft:gui/advancements/backgrounds/adventure"
+        adv["display"]["show_toast"] = False; adv["display"]["announce_to_chat"] = False
+    else:
+        adv["parent"] = f"{NS}:feats/{parent}"
+    adv["criteria"] = crit or {"done": {"trigger": "minecraft:impossible"}}
+    w(f"{DATA}/{NS}/advancement/feats/{name}.json", adv)
+
 # ---- lang -----------------------------------------------------------------------------------
 names = {
     "pistol": "Pistol", "smg": "SMG", "shotgun": "Shotgun", "rifle": "Rifle", "sniper_rifle": "Sniper Rifle",
@@ -142,6 +178,9 @@ names = {
 }
 lang = {f"item.{NS}.{k}": v for k, v in names.items()}
 lang.update({f"entity.{NS}.{e}": names[e] for e in THROWN})
+for name, icon, parent, frame, title, desc, crit in FEATS:
+    lang[f"advancements.{NS}.{name}.title"] = title
+    lang[f"advancements.{NS}.{name}.description"] = desc
 lang.update({
     "itemGroup.apocalypse_toolkit": "Apocalypse Toolkit",
     "key.categories.apocalypse_toolkit.toolkit": "Apocalypse Toolkit",

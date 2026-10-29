@@ -36,6 +36,7 @@ public class DetonatorItem extends Item {
         if (level instanceof ServerLevel server) {
             List<BlockPos> charges = charges(server, player);
             for (int i = 0; i < charges.size(); i++) Blasts.queue(server, charges.get(i), 6 + i * 2, player.getUUID());
+            if (charges.size() >= 3) com.sablednah.apocalypsetoolkit.feats.Feats.award(player, "controlled_demolition");
             player.sendOverlayMessage(charges.isEmpty() ? Component.translatable("message.apocalypse_toolkit.detonator.none", RANGE)
                     : Component.translatable("message.apocalypse_toolkit.detonator.armed", charges.size()));
         }

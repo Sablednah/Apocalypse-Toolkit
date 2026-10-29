@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:pistol"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.root.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "background": "minecraft:gui/advancements/backgrounds/adventure"
+  },
+  "criteria": {
+    "armed": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#apocalypse_toolkit:guns"
+          }
+        ]
+      }
+    }
+  }
+}

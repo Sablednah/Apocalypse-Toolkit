@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "id": "apocalypse_toolkit:flamethrower"
+    },
+    "title": {
+      "translate": "advancements.apocalypse_toolkit.barbecue.title"
+    },
+    "description": {
+      "translate": "advancements.apocalypse_toolkit.barbecue.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "apocalypse_toolkit:feats/root",
+  "criteria": {
+    "flame": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "killing_blow": {
+          "tags": [
+            {
+              "id": "apocalypse_toolkit:flame",
+              "expected": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}
