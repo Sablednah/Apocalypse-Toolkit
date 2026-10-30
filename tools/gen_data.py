@@ -198,6 +198,7 @@ lang.update({
     "message.apocalypse_toolkit.not_hurt": "You're not hurt.",
     "item.apocalypse_toolkit.crowbar.lore": "Theoretical physicist not included.",
     "attribute.name.apocalypse_toolkit.flame_skill": "Flame Skill",
+    "jei.apocalypse_toolkit.sprung": "Sprung (shuts behind you)",
     f"death.attack.{NS}.flamethrower": "%1$s was burnt to a crisp by %2$s",
     f"death.attack.{NS}.flamethrower.item": "%1$s was burnt to a crisp by %2$s using %3$s",
     f"death.attack.{NS}.flamethrower.player": "%1$s was burnt to a crisp whilst fighting %2$s",
