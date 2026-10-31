@@ -167,19 +167,30 @@ def write(path, obj):
     with open(path, "w") as f:
         json.dump(obj, f, indent=2); f.write("\n")
 
+def edited(path, fresh):
+    """True when the file on disk is not what this script would write: someone changed it (Blockbench), so keep it."""
+    if not os.path.exists(path): return False
+    if isinstance(fresh, Image.Image):
+        return list(Image.open(path).convert("RGBA").getdata()) != list(fresh.convert("RGBA").getdata())
+    return json.load(open(path)) != fresh
+
 def main():
+    kept = []
     for n, (name, boxes) in enumerate(GUNS.items()):
         os.makedirs(os.path.join(RES, "textures", "item", "gun"), exist_ok=True)
-        palette(n + 1).save(os.path.join(RES, "textures", "item", "gun", name + ".png"))
+        tex, mdl = os.path.join(RES, "textures", "item", "gun", name + ".png"), os.path.join(RES, "models", "item", name + "_3d.json")
+        fresh_tex, fresh_mdl = palette(n + 1), model(name, boxes)
+        if edited(tex, fresh_tex) or edited(mdl, fresh_mdl): kept.append(name)   # hand-edited: model and texture stay together
+        else:
+            fresh_tex.save(tex); write(mdl, fresh_mdl)
         if name not in PAINTED: icon(boxes, 0.0 if name == "pistol" else 35.0).save(os.path.join(RES, "textures", "item", name + ".png"))
-        write(os.path.join(RES, "models", "item", name + "_3d.json"), model(name, boxes))
         write(os.path.join(RES, "models", "item", name + ".json"),
               {"parent": "minecraft:item/handheld", "textures": {"layer0": f"{NS}:item/{name}"}})
         write(os.path.join(RES, "items", name + ".json"), {"model": {
             "type": "minecraft:select", "property": "minecraft:display_context",
             "cases": [{"when": ["gui"], "model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}}],
             "fallback": {"type": "minecraft:model", "model": f"{NS}:item/{name}_3d"}}})
-    print("guns written")
+    print("guns written" + (f"; kept hand-edited models/textures: {', '.join(kept)}" if kept else ""))
 
 if __name__ == "__main__":
     main()
