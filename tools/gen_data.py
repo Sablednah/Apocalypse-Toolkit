@@ -173,7 +173,7 @@ names = {
     "rifle_rounds": "Rifle Rounds", "sniper_round": "Sniper Round", "laser_cell": "Laser Cell", "grenade": "Grenade",
     "molotov": "Molotov", "bandage": "Bandage", "medkit": "Medkit", "adrenaline_syringe": "Adrenaline Syringe",
     "antidote_syringe": "Antidote Syringe", "crowbar": "Crowbar", "lead_pipe": "Lead Pipe", "shiv": "Shiv",
-    "hunting_bow": "Hunting Bow", "plaster": "Plaster", "flamethrower": "Flamethrower", "fuel_canister": "Fuel Canister", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
+    "hunting_bow": "Compound Bow", "plaster": "Plaster", "flamethrower": "Flamethrower", "fuel_canister": "Fuel Canister", "pipe_bomb": "Pipe Bomb", "smoke_grenade": "Smoke Grenade",
     "chemical_grenade": "Chemical Grenade", "detonator": "Detonator",
 }
 lang = {f"item.{NS}.{k}": v for k, v in names.items()}

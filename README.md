@@ -72,8 +72,8 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 - **Crowbar**: hits like an iron sword, mines like a stone pickaxe and axe together, and opens chests, barrels and crates fast (`#apocalypse_toolkit:crowbar_mineable`, plus
   anything in `#c:chests` / `#c:barrels`).
 - **Lead Pipe** (slow, heavy) and **Shiv** (fast, light). Enchanting: the crowbar takes sword and pickaxe/shovel enchantments; the shiv a sword's (Sharpness counts one
-  level higher on it); the lead pipe a mace's (Density, Breach, Wind Burst); the hunting bow a bow's.
-- **Hunting Bow**: arrows fly 25% faster, twice as true, and hit 40% harder.
+  level higher on it); the lead pipe a mace's (Density, Breach, Wind Burst); the compound bow a bow's.
+- **Compound Bow**: arrows fly 25% faster, twice as true, and hit 40% harder.
 - **Sprung doors, trapdoors and gates**: craft any of them with an iron nugget (`#apocalypse_toolkit:sprung_material`; JEI lists
   every one, and the creative tab has them all); it swings shut a second after you
   go through, waits while someone stands in it, and leaves redstone-powered ones alone.

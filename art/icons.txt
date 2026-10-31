@@ -13,10 +13,10 @@ Row and column count from 1, left to right, top to bottom. x,y is the cell's top
   7  1,7      110,2    flamethrower.png              Flamethrower                Weapon: short-range fire cone, uses Fuel Canisters; Pyros get big bonuses.
   8  1,8      128,2    fuel_canister.png             Fuel Canister               Ammo: fuel for the flamethrower.
   9  1,9      146,2    grenade.png                   Grenade                     Throwable: frag grenade; hold to cook the fuse.
- 10  1,10     164,2    hunting_bow.png               Hunting Bow                 Weapon: hunting bow (idle look).
- 11  1,11     182,2    hunting_bow_pulling_0.png     -                           Hunting bow: first pull frame.
- 12  1,12     200,2    hunting_bow_pulling_1.png     -                           Hunting bow: second pull frame.
- 13  2,1      2,20     hunting_bow_pulling_2.png     -                           Hunting bow: full draw frame.
+ 10  1,10     164,2    hunting_bow.png               Compound Bow                Weapon: compound bow (idle look).
+ 11  1,11     182,2    hunting_bow_pulling_0.png     -                           Compound bow: first pull frame.
+ 12  1,12     200,2    hunting_bow_pulling_1.png     -                           Compound bow: second pull frame.
+ 13  2,1      2,20     hunting_bow_pulling_2.png     -                           Compound bow: full draw frame.
  14  2,2      20,20    laser_cell.png                Laser Cell                  Ammo: energy cell for the laser rifle.
  15  2,3      38,20    laser_rifle.png               Laser Rifle                 Weapon: laser rifle (loot only). Inventory icon; the held gun is a 3D model.
  16  2,4      56,20    lead_pipe.png                 Lead Pipe                   Weapon: lead pipe (takes mace enchantments).

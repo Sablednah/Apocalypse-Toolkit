@@ -21,8 +21,9 @@ hand-edited unless you mean to start again).
 
 - Gun icons (`textures/item/<gun>.png`) are the 3D model's side view at 16x16, long guns tilted corner to corner.
   Repaint them by hand, or regenerate after changing the cuboids in `tools/art/guns.py`.
-- Ammo, throwables and medical: `tools/art/items.py`. Crowbar, lead pipe, shiv, hunting bow (+ 3 pulling frames):
-  `tools/art/gear.py`. All 16x16, dark outline, light from the top left.
+- Ammo, throwables and medical: `tools/art/items.py`. Lead pipe and shiv: `tools/art/gear.py`. The crowbar, plaster and
+  compound bow (id `hunting_bow`, + 3 pulling frames) are hand-drawn and listed in `art/hand_drawn.txt`, so the scripts
+  leave them alone. All 16x16, dark outline, light from the top left.
 
 ## The sentry turret
 
