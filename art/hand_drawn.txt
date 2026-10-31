@@ -1,2 +1,6 @@
 crowbar
+hunting_bow
+hunting_bow_pulling_0
+hunting_bow_pulling_1
+hunting_bow_pulling_2
 plaster
