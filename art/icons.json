@@ -35,118 +35,128 @@
    "y": 2
   },
   {
-   "file": "grenade.png",
+   "file": "flamethrower.png",
    "x": 110,
+   "y": 2
+  },
+  {
+   "file": "fuel_canister.png",
+   "x": 128,
+   "y": 2
+  },
+  {
+   "file": "grenade.png",
+   "x": 146,
    "y": 2
   },
   {
    "file": "hunting_bow.png",
-   "x": 128,
+   "x": 164,
    "y": 2
   },
   {
    "file": "hunting_bow_pulling_0.png",
-   "x": 146,
+   "x": 182,
    "y": 2
   },
   {
    "file": "hunting_bow_pulling_1.png",
-   "x": 164,
+   "x": 200,
    "y": 2
   },
   {
    "file": "hunting_bow_pulling_2.png",
-   "x": 182,
-   "y": 2
+   "x": 2,
+   "y": 20
   },
   {
    "file": "laser_cell.png",
-   "x": 200,
-   "y": 2
+   "x": 20,
+   "y": 20
   },
   {
    "file": "laser_rifle.png",
-   "x": 2,
+   "x": 38,
    "y": 20
   },
   {
    "file": "lead_pipe.png",
-   "x": 20,
+   "x": 56,
    "y": 20
   },
   {
    "file": "medkit.png",
-   "x": 38,
+   "x": 74,
    "y": 20
   },
   {
    "file": "molotov.png",
-   "x": 56,
-   "y": 20
-  },
-  {
-   "file": "pipe_bomb.png",
-   "x": 74,
-   "y": 20
-  },
-  {
-   "file": "pistol.png",
    "x": 92,
    "y": 20
   },
   {
-   "file": "pistol_rounds.png",
+   "file": "pipe_bomb.png",
    "x": 110,
    "y": 20
   },
   {
-   "file": "plaster.png",
+   "file": "pistol.png",
    "x": 128,
    "y": 20
   },
   {
-   "file": "rifle.png",
+   "file": "pistol_rounds.png",
    "x": 146,
    "y": 20
   },
   {
-   "file": "rifle_rounds.png",
+   "file": "plaster.png",
    "x": 164,
    "y": 20
   },
   {
-   "file": "shiv.png",
+   "file": "rifle.png",
    "x": 182,
    "y": 20
   },
   {
-   "file": "shotgun.png",
+   "file": "rifle_rounds.png",
    "x": 200,
    "y": 20
   },
   {
-   "file": "shotgun_shell.png",
+   "file": "shiv.png",
    "x": 2,
    "y": 38
   },
   {
-   "file": "smg.png",
+   "file": "shotgun.png",
    "x": 20,
    "y": 38
   },
   {
-   "file": "smoke_grenade.png",
+   "file": "shotgun_shell.png",
    "x": 38,
    "y": 38
   },
   {
-   "file": "sniper_rifle.png",
+   "file": "smg.png",
    "x": 56,
    "y": 38
   },
   {
-   "file": "sniper_round.png",
+   "file": "smoke_grenade.png",
    "x": 74,
+   "y": 38
+  },
+  {
+   "file": "sniper_rifle.png",
+   "x": 92,
+   "y": 38
+  },
+  {
+   "file": "sniper_round.png",
+   "x": 110,
    "y": 38
   }
  ]
