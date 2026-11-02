@@ -187,6 +187,15 @@ public final class SelfTest {
             fake.getInventory().clearContent();
             fake.setItemInHand(InteractionHand.MAIN_HAND, pistol);
 
+            // Power: guns take it (book and table go by supported_items), bows still do, and V is +50% a shot
+            var powerEnch = ench.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.POWER);
+            check("Power goes on a gun", powerEnch.value().canEnchant(new ItemStack(ModRegistry.PISTOL.get())), "pistol");
+            check("Power still goes on a bow", powerEnch.value().canEnchant(new ItemStack(net.minecraft.world.item.Items.BOW)), "bow");
+            ItemStack powered = new ItemStack(ModRegistry.PISTOL.get());
+            powered.enchant(powerEnch, 5);
+            check("Power V is +50% gun damage", Math.abs(com.sablednah.apocalypsetoolkit.gun.GunItem.power(level, powered) - 1.5F) < 1e-4,
+                    String.valueOf(com.sablednah.apocalypsetoolkit.gun.GunItem.power(level, powered)));
+
             // ---- the flamethrower: reach, fire, fuel, and flame skill ----
             fake.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, -90F, 0F);
             Monster close = husk(level, base.offset(4, 0, 0)), far8 = husk(level, base.offset(8, 0, 1));

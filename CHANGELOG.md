@@ -4,6 +4,7 @@
 
 First build (2026-10-24, overnight).
 
+- Guns take Power, from a book or the enchanting table: +10% damage a level (Power V +50%), per pellet and on the flamethrower's fire. Bows keep vanilla Power.
 - The hunting bow is now the Compound Bow, with new sprites (Sable's frames, polished). Same item id, so bows you already have keep working.
 - Guns: pistol, SMG, shotgun, rifle, sniper rifle, laser rifle. Hit-scan rays, magazines (shown as the item bar),
   the Reload key (R), shell-by-shell shotgun loading, recoil, sneak to steady (and to scope the sniper), headshots,

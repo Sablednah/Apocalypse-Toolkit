@@ -162,6 +162,14 @@ public class GunItem extends Item {
      * goes through one more target a level. */
     static final float MULTISHOT_ANGLE = 6F, QUICK_CHARGE = 0.2F;
 
+    /** Damage bonus a level of Power gives a gun (data/minecraft/enchantment/power.json lets guns take it): +10%. */
+    public static final float POWER_PER_LEVEL = 0.10F;
+
+    /** The multiplier Power puts on this gun's shots: 1 + 10% a level. */
+    public static float power(ServerLevel level, ItemStack stack) {
+        return 1F + POWER_PER_LEVEL * level(level, stack, net.minecraft.world.item.enchantment.Enchantments.POWER);
+    }
+
     private static int level(ServerLevel level, ItemStack stack, net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> key) {
         return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
                 level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(key), stack);
@@ -193,7 +201,7 @@ public class GunItem extends Item {
             for (int i = 0; i < Math.min(pierce, hits.size()); i++) {
                 Entity target = hits.get(i).getKey();
                 stop = hits.get(i).getValue();
-                float damage = spec.damage();
+                float damage = spec.damage() * power(level, player.getMainHandItem());
                 boolean head = target instanceof LivingEntity living && stop.y >= living.getEyeY() - 0.15;
                 if (head) damage *= spec.headshot();
                 boolean alive = target.isAlive(), full = target instanceof LivingEntity l && l.getHealth() >= l.getMaxHealth();

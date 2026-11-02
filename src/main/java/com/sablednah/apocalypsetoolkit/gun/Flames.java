@@ -60,7 +60,7 @@ public final class Flames {
         if (!player.isCreative() && level.getRandom().nextFloat() < 1F / (1F + skill))
             stack.set(ModRegistry.LOADED.get(), GunItem.loaded(stack) - 1);
         double range = spec.range() * (1.0 + 0.5 * skill);
-        float damage = spec.damage() * (1F + 0.5F * skill);
+        float damage = spec.damage() * (1F + 0.5F * skill) * GunItem.power(level, stack);
         Vec3 eye = player.getEyePosition(), dir = Vec3.directionFromRotation(player.getXRot(), player.getYRot());   // as the guns aim
         if (level.getGameTime() % 8 < spec.cooldown())
             level.playSound(null, player.getX(), player.getY(), player.getZ(), spec.sound().get(), SoundSource.PLAYERS, 1.0F,

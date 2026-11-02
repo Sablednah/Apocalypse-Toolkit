@@ -91,7 +91,7 @@ w(f"{DATA}/legendquest/tags/item/finesse.json", {"replace": False, "values": [{"
 w(f"{DATA}/{NS}/tags/item/melee.json", {"values": [ns("crowbar"), ns("lead_pipe"), ns("shiv")]})
 # vanilla enchanting is by tag. Crowbar: sword and pickaxe/shovel enchantments. Shiv: a sword's (and Sharpness counts a
 # level higher on it, in code). Lead pipe: a mace's. Guns: a crossbow's (Quick Charge, Multishot, Piercing; read in
-# GunItem). Hunting bow: a bow's.
+# GunItem), plus Power (below). Compound bow: a bow's.
 MELEE_SWORD = ["crowbar", "shiv"]
 ENCHANTABLE = {
     "sharp_weapon": MELEE_SWORD, "melee_weapon": MELEE_SWORD, "sweeping": MELEE_SWORD,
@@ -103,6 +103,18 @@ ENCHANTABLE = {
 }
 for tag, items in ENCHANTABLE.items():
     w(f"{DATA}/minecraft/tags/item/enchantable/{tag}.json", {"replace": False, "values": [ns(i) for i in items]})
+# Power on guns too (book and table): vanilla's Power, word for word, but taking bows and guns. Its own arrow damage still
+# only touches arrows; GunItem/Flames read the level and add POWER_PER_LEVEL a level to every shot.
+w(f"{DATA}/{NS}/tags/item/enchantable/power.json", {"values": ["#minecraft:enchantable/bow"] + [ns(g) for g in GUNS]})
+w(f"{DATA}/minecraft/enchantment/power.json", {
+    "anvil_cost": 1, "description": {"translate": "enchantment.minecraft.power"},
+    "effects": {"minecraft:damage": [{
+        "effect": {"type": "minecraft:add", "value": {"type": "minecraft:linear", "base": 1.0, "per_level_above_first": 0.5}},
+        "requirements": {"condition": "minecraft:entity_properties", "entity": "direct_attacker",
+                         "predicate": {"minecraft:entity_type": "#minecraft:arrows"}}}]},
+    "max_cost": {"base": 16, "per_level_above_first": 10}, "max_level": 5,
+    "min_cost": {"base": 1, "per_level_above_first": 10}, "slots": ["mainhand"],
+    "supported_items": f"#{NS}:enchantable/power", "weight": 10})
 shaped("crowbar", ["  I", " I ", "I  "], {"I": I})
 shaped("lead_pipe", [" I", "I "], {"I": "minecraft:iron_block"})
 shaped("shiv", ["N", "S"], {"N": "minecraft:iron_nugget", "S": "minecraft:string"})
