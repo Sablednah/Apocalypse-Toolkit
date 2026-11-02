@@ -175,6 +175,21 @@ public class GunItem extends Item {
                 level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(key), stack);
     }
 
+    /**
+     * Where a shot of {@code range} stops being in loaded land: a sniper or laser shot (128/96 blocks) past view distance
+     * would otherwise make clip() load, or generate, the chunks it crosses on the server thread. Checked every 8 blocks
+     * with getChunkNow, which never loads and is null until a chunk is fully ready.
+     */
+    static Vec3 loadedEnd(ServerLevel level, Vec3 eye, Vec3 dir, double range) {
+        Vec3 last = eye;
+        for (double d = 8; ; d = Math.min(range, d + 8)) {
+            Vec3 at = eye.add(dir.scale(d));
+            if (level.getChunkSource().getChunkNow(net.minecraft.util.Mth.floor(at.x) >> 4, net.minecraft.util.Mth.floor(at.z) >> 4) == null) return last;
+            last = at;
+            if (d >= range) return at;
+        }
+    }
+
     /** Ticks for one reload step, shortened by Quick Charge (a fifth a level, never under a quarter). */
     private int reloadTicks(ServerLevel level, ItemStack stack) {
         int qc = level(level, stack, net.minecraft.world.item.enchantment.Enchantments.QUICK_CHARGE);
@@ -188,7 +203,7 @@ public class GunItem extends Item {
         float pitch = Mth.clamp(player.getXRot() + (r.nextFloat() - 0.5F) * 2F * spread, -90F, 90F);
         Vec3 dir = Vec3.directionFromRotation(pitch, yaw);
         Vec3 eye = player.getEyePosition();
-        Vec3 end = eye.add(dir.scale(spec.range()));
+        Vec3 end = loadedEnd(level, eye, dir, spec.range());
         BlockHitResult block = level.clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         Vec3 stop = block.getType() == HitResult.Type.MISS ? end : block.getLocation();
         final Vec3 wall = stop;

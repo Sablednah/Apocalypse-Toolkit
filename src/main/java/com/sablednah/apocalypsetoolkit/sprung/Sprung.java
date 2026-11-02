@@ -107,6 +107,9 @@ public final class Sprung {
     /** A sprung one of this door, trapdoor or gate. */
     public static ItemStack sprung(net.minecraft.world.item.Item item) {
         ItemStack stack = new ItemStack(item);
+        // "Sprung Oak Door": says what it is in the inventory, and lets a JEI search for "sprung" find it
+        stack.set(net.minecraft.core.component.DataComponents.ITEM_NAME,
+                net.minecraft.network.chat.Component.translatable("item.apocalypse_toolkit.sprung", stack.getHoverName()));
         stack.set(SPRUNG.get(), Unit.INSTANCE);
         return stack;
     }

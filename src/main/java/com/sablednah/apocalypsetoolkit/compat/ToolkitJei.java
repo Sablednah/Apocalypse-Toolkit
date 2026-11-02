@@ -47,6 +47,21 @@ public class ToolkitJei implements IModPlugin {
         return Identifier.fromNamespaceAndPath(ApocalypseToolkit.MOD_ID, "jei");
     }
 
+    /** A sprung door is its own entry, not a duplicate of the plain one (the SPRUNG component tells them apart). */
+    @Override
+    public void registerItemSubtypes(mezz.jei.api.registration.ISubtypeRegistration registration) {
+        BuiltInRegistries.ITEM.get(Sprung.SPRUNGABLE_ITEMS).ifPresent(set -> {
+            for (Holder<Item> h : set) registration.registerFromDataComponentTypes(h.value(), Sprung.SPRUNG.get());
+        });
+    }
+
+    /** One of each kind in the ingredient list, so searching "sprung" shows them: an oak door, trapdoor and gate. */
+    @Override
+    public void registerExtraIngredients(mezz.jei.api.registration.IExtraIngredientRegistration registration) {
+        registration.addExtraItemStacks(List.of(Sprung.sprung(Items.OAK_DOOR), Sprung.sprung(Items.OAK_TRAPDOOR),
+                Sprung.sprung(Items.OAK_FENCE_GATE)));
+    }
+
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
