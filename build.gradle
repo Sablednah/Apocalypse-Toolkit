@@ -77,7 +77,7 @@ def newestJar(String dir, String prefix) {
 // building another Minecraft line clears it, which broke this build on 2026-10-01). That copy is also
 // the version players get, so compiling against it is never wrong, only possibly older.
 def compileJar(String dir, String prefix) {
-    def instanceMods = (System.getenv('THREADWORK_INSTANCE') ?: '/mnt/c/Users/darre/curseforge/minecraft/Instances/LegendQuest ZARP') + '/mods'
+    def instanceMods = (System.getenv('THREADWORK_INSTANCE') ?: '/mnt/d/minecraft/Instances/LegendQuest ZARP') + '/mods'
     def jar = newestJar(dir, prefix)
     return jar.isEmpty() ? newestJar(instanceMods, prefix) : jar
 }
