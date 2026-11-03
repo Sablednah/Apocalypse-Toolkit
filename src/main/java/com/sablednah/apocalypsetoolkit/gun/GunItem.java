@@ -237,13 +237,8 @@ public class GunItem extends Item {
                 level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), stop.x, stop.y, stop.z, 5, 0.05, 0.05, 0.05, 0.1);
             level.sendParticles(ParticleTypes.SMOKE, stop.x, stop.y, stop.z, 2, 0.02, 0.02, 0.02, 0.01);
         }
-        if (spec.laser()) {
-            double len = stop.distanceTo(eye);
-            for (double d = 1.0; d < len; d += 0.35) {
-                Vec3 p = eye.add(dir.scale(d)).add(0, -0.12, 0);
-                level.sendParticles(new DustParticleOptions(0xFF2A2A, 0.7F), p.x, p.y, p.z, 1, 0, 0, 0, 0);
-            }
-        }
+        if (spec.laser() && stop.distanceTo(eye) > 1.0)
+            LaserBeamPayload.send(level, eye.add(dir).add(0, -0.12, 0), stop.add(0, -0.12, 0));
     }
 
     private DamageSource source(ServerLevel level, Player player) {

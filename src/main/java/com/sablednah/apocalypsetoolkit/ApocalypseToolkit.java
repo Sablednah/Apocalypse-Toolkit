@@ -15,6 +15,7 @@ public final class ApocalypseToolkit {
     public ApocalypseToolkit(IEventBus modBus) {
         ModRegistry.register(modBus);
         ReloadPayload.register(modBus);
+        com.sablednah.apocalypsetoolkit.gun.LaserBeamPayload.register(modBus);
         com.sablednah.apocalypsetoolkit.sprung.Sprung.register(modBus);
         com.sablednah.apocalypsetoolkit.explosive.Blasts.register();
         com.sablednah.apocalypsetoolkit.gear.ShivSharpness.register();

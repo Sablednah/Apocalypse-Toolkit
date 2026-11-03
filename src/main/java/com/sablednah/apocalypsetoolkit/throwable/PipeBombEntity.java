@@ -37,12 +37,29 @@ public class PipeBombEntity extends FusedThrowable {
         int every = tick < 50 ? 12 : tick < 80 ? 6 : 3;
         if (tick % every == 0)
             level.playSound(null, getX(), getY(), getZ(), com.sablednah.apocalypsetoolkit.ModRegistry.BEEP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-        if (tick % 20 == 0)
-            for (Monster m : level.getEntitiesOfClass(Monster.class, new AABB(blockPosition()).inflate(LURE))) {
-                m.setTarget(null);
-                m.getNavigation().moveTo(getX(), getY(), getZ(), 1.1);
+        // Once a second: who's in range (the nearest MAX_LURED). Each tick: a twentieth of them repath, so a crowd's
+        // pathfinding is spread over the second instead of all in one tick; one already on its way is left alone.
+        if (tick % 20 == 0) {
+            lured = level.getEntitiesOfClass(Monster.class, new AABB(blockPosition()).inflate(LURE), Monster::isAlive);
+            if (lured.size() > MAX_LURED) {
+                lured = new java.util.ArrayList<>(lured);
+                lured.sort(java.util.Comparator.comparingDouble(m -> m.distanceToSqr(this)));
+                lured = lured.subList(0, MAX_LURED);
             }
+        }
+        for (int i = tick % 20; i < lured.size(); i += 20) {
+            Monster m = lured.get(i);
+            if (!m.isAlive()) continue;
+            m.setTarget(null);
+            var going = m.getNavigation().getTargetPos();
+            if (going != null && !m.getNavigation().isDone() && going.closerToCenterThan(position(), 2.0)) continue;
+            m.getNavigation().moveTo(getX(), getY(), getZ(), 1.1);
+        }
     }
+
+    /** At most this many monsters are drawn to one bomb (the nearest). */
+    static final int MAX_LURED = 48;
+    private java.util.List<Monster> lured = java.util.List.of();
 
     @Override
     protected void detonate(ServerLevel level) {

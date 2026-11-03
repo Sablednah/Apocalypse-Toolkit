@@ -118,15 +118,20 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         if (!(level instanceof ServerLevel server)) return;
         be.repair();
         be.ticks++;
-        if (be.ticks % 10 == 0) be.pullAmmo(server, pos);
+        if (be.ticks >= be.nextPull) be.pullAmmo(server, pos);
         be.turn();
         if (be.cooldown > 0) be.cooldown--;
         if (be.mode == Mode.OFF || be.health <= 0 || be.items.get(AMMO).isEmpty()) { be.targetId = -1; return; }
         Vec3 muzzle = Vec3.atCenterOf(pos).add(0, 0.5, 0);           // above its own model, so its sight starts clear
         LivingEntity t = server.getEntity(be.targetId) instanceof LivingEntity e && be.valid(server, muzzle, e) ? e : null;
         if (t == null && be.ticks % 5 == 0) {
-            t = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE), e -> be.valid(server, muzzle, e))
-                    .stream().min(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle))).orElse(null);
+            // the cheap tests for everyone in range, then line of sight nearest first, stopping at the first it can see
+            // (was a ray for every candidate)
+            var near = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE),
+                    e -> be.wants(server, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE);
+            near.sort(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle)));
+            for (int i = 0; i < near.size() && i < MAX_SIGHT_CHECKS && t == null; i++)
+                if (be.sees(server, muzzle, near.get(i))) t = near.get(i);
         }
         be.targetId = t == null ? -1 : t.getId();
         if (t == null) return;
@@ -145,12 +150,25 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         return wants(level, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE && sees(level, muzzle, e);
     }
 
-    /** Tops up the ammunition slot from a container underneath (a chest, barrel, hopper, AE2 interface...). */
+    /** Line-of-sight rays per target search at most: the nearest this many it could shoot at. */
+    private static final int MAX_SIGHT_CHECKS = 8;
+    /** Ticks between looks underneath for ammo: 10 while it finds some, doubling to {@link #MAX_PULL_WAIT} while it doesn't. */
+    private int nextPull, pullWait = 10;
+    private static final int MAX_PULL_WAIT = 100;
+
     private void pullAmmo(ServerLevel level, BlockPos pos) {
+        boolean got = tryPullAmmo(level, pos);
+        // empty and finding nothing: still look every 2 s, so refilling the chest gets it firing again soon
+        pullWait = got ? 10 : Math.min(pullWait * 2, items.get(AMMO).isEmpty() ? 40 : MAX_PULL_WAIT);
+        nextPull = ticks + pullWait;
+    }
+
+    /** Tops up the ammunition slot from a container underneath (a chest, barrel, hopper, AE2 interface...). True if it took some. */
+    private boolean tryPullAmmo(ServerLevel level, BlockPos pos) {
         ItemStack have = items.get(AMMO);
-        if (have.getCount() >= have.getMaxStackSize() && !have.isEmpty()) return;
+        if (have.getCount() >= have.getMaxStackSize() && !have.isEmpty()) return true;   // full: keep looking at the usual pace
         var below = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK, pos.below(), Direction.UP);
-        if (below == null) return;
+        if (below == null) return false;
         for (int i = 0; i < below.size(); i++) {
             var res = below.getResource(i);
             if (res.isEmpty()) continue;
@@ -163,9 +181,10 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
                 if (got <= 0) continue;
                 if (have.isEmpty()) items.set(AMMO, res.toStack(got)); else have.grow(got);
                 setChanged();
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     // ---- client sync: only the aim goes over the wire ----
@@ -204,6 +223,7 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         ItemStack ammo = items.get(AMMO);
         float damage = ammo.is(ModRegistry.RIFLE_ROUNDS.get()) ? RIFLE_DAMAGE : DAMAGE;
         ammo.shrink(1);
+        if (ammo.isEmpty()) lookForAmmoNow();
         health--;
         setChanged();
         var type = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(GunItem.BULLET);
@@ -272,7 +292,13 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
     @Override public ItemStack getItem(int slot) { return items.get(slot); }
     @Override public ItemStack removeItem(int slot, int count) { ItemStack s = ContainerHelper.removeItem(items, slot, count); if (!s.isEmpty()) setChanged(); return s; }
     @Override public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(items, slot); }
-    @Override public void setItem(int slot, ItemStack stack) { items.set(slot, stack); stack.limitSize(getMaxStackSize(stack)); setChanged(); }
+    @Override public void setItem(int slot, ItemStack stack) { items.set(slot, stack); stack.limitSize(getMaxStackSize(stack)); setChanged(); lookForAmmoNow(); }
+
+    /** Its ammo changed (emptied, or a player or hopper touched it): look underneath on the next tick, not after the backoff. */
+    private void lookForAmmoNow() {
+        nextPull = ticks;
+        pullWait = 10;
+    }
     @Override public boolean stillValid(Player player) { return Container.stillValidBlockEntity(this, player); }
     @Override public void clearContent() { items.clear(); }
 

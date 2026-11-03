@@ -40,11 +40,16 @@ public final class Blasts {
                 List<Pending> list = PENDING.get(level.dimension());
                 if (list == null || list.isEmpty()) continue;
                 long now = level.getGameTime();
+                // at most MAX_PER_TICK blasts a tick: a big chain ripples on over a few more ticks (earliest due first)
+                // instead of dozens of TNT-sized explosions landing in the same tick
                 List<Pending> due = new ArrayList<>();
                 for (Iterator<Pending> it = list.iterator(); it.hasNext();) {
                     Pending p = it.next();
-                    if (p.due() <= now) { due.add(p); it.remove(); }
+                    if (p.due() <= now) due.add(p);
                 }
+                due.sort(java.util.Comparator.comparingLong(Pending::due));
+                if (due.size() > MAX_PER_TICK) due = new ArrayList<>(due.subList(0, MAX_PER_TICK));
+                list.removeAll(due);
                 due.forEach(p -> fire(level, p));
             }
         });
@@ -73,6 +78,9 @@ public final class Blasts {
                 queue(level, at, 4 + level.getRandom().nextInt(4), null);
             }
     }
+
+    /** Most charges that go off in one tick in one world. */
+    public static final int MAX_PER_TICK = 4;
 
     /** How near another charge must be to go off with one. */
     public static final int SYMPATHY = 3;
