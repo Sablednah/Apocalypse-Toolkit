@@ -139,7 +139,9 @@ public class GunItem extends Item {
         Vec3 muzzle = player.getEyePosition().add(player.getViewVector(1F).scale(0.9)).add(0, -0.15, 0);
         server.sendParticles(spec.laser() ? ParticleTypes.END_ROD : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
                 spec.laser() ? 1 : 3, 0.02, 0.02, 0.02, 0.01);
-        int pierce = 1 + level(server, stack, net.minecraft.world.item.enchantment.Enchantments.PIERCING);
+        // A beam burns through everything in line until a wall (Laser Show needs two in one beam); bullets stop in the
+        // first, plus one more a level of Piercing.
+        int pierce = spec.laser() ? Integer.MAX_VALUE : 1 + level(server, stack, net.minecraft.world.item.enchantment.Enchantments.PIERCING);
         var tally = new com.sablednah.apocalypsetoolkit.feats.Feats.Shot();
         for (int i = 0; i < spec.pellets(); i++) ray(server, player, r, 0F, pierce, tally);
         if (level(server, stack, net.minecraft.world.item.enchantment.Enchantments.MULTISHOT) > 0) {

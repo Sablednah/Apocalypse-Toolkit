@@ -13,7 +13,7 @@ into a pack.
 | Shotgun | 8 x 3.5 | 16 | 1.1/s | 6 | Shotgun Shells | loads shell by shell; firing interrupts |
 | Rifle | 8 | 64 | 5/s | 20 | Rifle Rounds | automatic |
 | Sniper Rifle | 22 (x2 headshot) | 128 | 0.7/s | 5 | Sniper Rounds | sneak to look through the scope |
-| Laser Rifle | 12 | 96 | 2.5/s | 16 | Laser Cells | a beam, rare |
+| Laser Rifle | 12 | 96 | 2.5/s | 16 | Laser Cells | a beam: burns through everything in line, rare |
 | Flamethrower | 2.5 + burning | 6 | held | 100 fuel | Fuel Canister (fills the tank) | a cone of fire; Flame Skill makes it better |
 
 - **Right-click** fires (hold for an automatic). An empty gun clicks and starts reloading if you carry its ammo.
@@ -24,7 +24,7 @@ into a pack.
   each point adds half the flamethrower's range and damage again, makes burns last twice as long and fuel twice as far.
 - A hit at head height does 1.5x damage (2x for the sniper). The bar under the gun shows rounds left.
 - Guns take crossbow enchantments: Quick Charge (reloads 20% faster a level), Multishot (two more shots either side),
-  Piercing (through one more target a level).
+  Piercing (through one more target a level; the laser already burns through everything in line).
 - Guns hit instantly (no bullet entity). Damage is `apocalypse_toolkit:bullet` / `:laser`, both in
   `#minecraft:is_projectile`, so Projectile Protection and stat mods treat it as a shot.
 
@@ -89,7 +89,7 @@ wears it), and what it shoots at (off, hostiles, hostiles and other players, eve
 
 ## Building and testing
 
-`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 77 checks of the mechanics
+`./gradlew build` (Java 25). `./gradlew runServer -Pselftest` boots a dev server, runs 78 checks of the mechanics
 (firing, reloading, shotgun loading, the sentry, sprung doors, every throwable, C4, wire and spikes, recipes, loot) and stops. Art and sound are
 from `tools/`; see `docs/ART.md`.
 

@@ -311,6 +311,18 @@ public final class SelfTest {
             shotgun.remove(ModRegistry.RELOAD_UNTIL.get());
             ModRegistry.SHOTGUN.get().use(level, fake, InteractionHand.MAIN_HAND);
             check("shotgun blast hits with pellets", b2 - second.getHealth() > ModRegistry.SHOTGUN.get().spec().damage(), b2 + " -> " + second.getHealth());
+            second.discard();
+
+            // the laser burns through everything in line, not just the first (no Piercing needed)
+            Monster near1 = husk(level, base.offset(3, 0, 0)), near2 = husk(level, base.offset(6, 0, 0));
+            ItemStack laser = new ItemStack(ModRegistry.LASER_RIFLE.get());
+            laser.set(ModRegistry.LOADED.get(), 16);
+            fake.setItemInHand(InteractionHand.MAIN_HAND, laser);
+            ModRegistry.LASER_RIFLE.get().use(level, fake, InteractionHand.MAIN_HAND);
+            check("laser burns through two in line", near1.getHealth() < near1.getMaxHealth() && near2.getHealth() < near2.getMaxHealth(),
+                    near1.getHealth() + ", " + near2.getHealth());
+            near1.discard();
+            near2.discard();
 
             // ---- the sentry ----
             BlockPos turret = base.offset(12, 0, 4);
