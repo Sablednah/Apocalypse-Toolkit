@@ -333,6 +333,19 @@ public final class SelfTest {
                 for (int i = 0; i < 10; i++) SentryBlockEntity.serverTick(level, turret, level.getBlockState(turret), be);
                 check("sentry pulls ammo from a chest below", be.getItem(SentryBlockEntity.AMMO).is(ModRegistry.PISTOL_ROUNDS.get()),
                         be.getItem(SentryBlockEntity.AMMO).toString());
+                // the Jade readout's numbers go to the client
+                var sync = be.getUpdateTag(level.registryAccess());
+                check("sentry syncs its ammo and condition", sync.getIntOr("ammo_count", -1) == be.getItem(SentryBlockEntity.AMMO).getCount()
+                        && sync.getIntOr("health", -1) > 0, sync.toString());
+                // dry: no ammo and nothing underneath, it still turns to a target (and clicks)
+                level.removeBlock(turret.below(), false);
+                be.setItem(SentryBlockEntity.AMMO, ItemStack.EMPTY);
+                prey.discard();
+                Monster dryTarget = husk(level, turret.offset(0, 0, 5));
+                for (int i = 0; i < 45; i++) SentryBlockEntity.serverTick(level, turret, level.getBlockState(turret), be);
+                check("an empty sentry still turns to a target", Math.abs(net.minecraft.util.Mth.wrapDegrees(be.aim() - 180F)) <= 10F,
+                        "aim " + be.aim());
+                dryTarget.discard();
             } else {
                 check("sentry block entity", false, "missing");
             }

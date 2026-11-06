@@ -147,9 +147,12 @@ public class GunItem extends Item {
             for (int i = 0; i < extra; i++) { ray(server, player, r, -MULTISHOT_ANGLE, pierce, tally); ray(server, player, r, MULTISHOT_ANGLE, pierce, tally); }
         }
         com.sablednah.apocalypsetoolkit.feats.Feats.shot(player, this, tally);
-        // Spray and Pray: a full SMG magazine emptied in one held burst
+        // Spray and Pray: a full SMG magazine emptied in one held burst. A burst's first shot is the one fired from
+        // use(), before the item is in use; the second comes from onUseTick a cooldown later, so asking
+        // "getTicksUsingItem() <= cooldown" as well counted it as a fresh start, saw one round gone and cleared the flag
+        // (found 2026-11-06: the feat never fired).
         if (this == ModRegistry.SMG.get()) {
-            if (!player.isUsingItem() || player.getTicksUsingItem() <= spec.cooldown()) SPRAY_FULL.put(player.getUUID(), loaded(stack) + 1 >= spec.magazine());
+            if (!player.isUsingItem()) SPRAY_FULL.put(player.getUUID(), loaded(stack) + 1 >= spec.magazine());
             if (loaded(stack) <= 0 && Boolean.TRUE.equals(SPRAY_FULL.remove(player.getUUID())))
                 com.sablednah.apocalypsetoolkit.feats.Feats.award(player, "spray_and_pray");
         }

@@ -86,6 +86,9 @@ dependencies {
     // JEI: shows the sprung recipes (compile only; the plugin loads only when JEI is installed). libs/ is git-ignored:
     // copy JEI's 26.2 jar there to build.
     compileOnly fileTree(dir: 'libs', include: 'jei-*.jar')
+    // Jade: the sentry's ammo/condition/mode readout when you look at it (compile only; the plugin loads only when
+    // Jade is installed). Copy Jade's 26.2 jar into libs/ too.
+    compileOnly fileTree(dir: 'libs', include: 'Jade-*.jar')
 }
 
 

@@ -46,7 +46,8 @@ import net.minecraft.world.phys.Vec3;
  * target within {@link #RANGE} blocks that it can see and that its mode allows, turns to it and fires one round:
  * {@link #DAMAGE} bullet damage (rifle rounds hit harder), credited to its owner. Each shot wears it by one; at zero
  * it stops until repaired. Iron ingots in the repair slot are used up automatically, {@link #REPAIR} each.
- * Pistol and rifle rounds both feed it.
+ * Pistol and rifle rounds both feed it. Out of ammo it still turns to a target and clicks; worn down it smokes (wisps
+ * below a quarter, thick smoke at zero). Ammo, condition and mode are synced for the Jade readout ({@link #readout}).
  */
 public class SentryBlockEntity extends BlockEntity implements Container, MenuProvider {
     public static final int AMMO = 0, IRON = 1, RANGE = 16, RATE = 15, MAX_WEAR = 256, REPAIR = 32;
@@ -101,6 +102,17 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, SentryBlockEntity be) {
         be.turn();
+        be.smoke(level, pos);
+    }
+
+    /** Worn below a quarter: a wisp now and then from the head. Worn out: thick smoke. Client side, from the synced condition. */
+    private void smoke(Level level, BlockPos pos) {
+        if (health > MAX_WEAR / 4) return;
+        var r = level.getRandom();
+        boolean dead = health <= 0;
+        if (r.nextInt(dead ? 3 : 12) != 0) return;
+        double x = pos.getX() + 0.5 + (r.nextDouble() - 0.5) * 0.4, y = pos.getY() + 1.05, z = pos.getZ() + 0.5 + (r.nextDouble() - 0.5) * 0.4;
+        level.addParticle(dead ? ParticleTypes.LARGE_SMOKE : ParticleTypes.SMOKE, x, y, z, 0, dead ? 0.04 : 0.02, 0);
     }
 
     void setOwner(Player p) {
@@ -121,29 +133,52 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         if (be.ticks >= be.nextPull) be.pullAmmo(server, pos);
         be.turn();
         if (be.cooldown > 0) be.cooldown--;
-        if (be.mode == Mode.OFF || be.health <= 0 || be.items.get(AMMO).isEmpty()) { be.targetId = -1; return; }
+        if (be.ticks % SYNC_EVERY == 0) be.syncIfChanged(server, pos, state);
+        if (be.mode == Mode.OFF || be.health <= 0) { be.targetId = -1; return; }
         Vec3 muzzle = Vec3.atCenterOf(pos).add(0, 0.5, 0);           // above its own model, so its sight starts clear
-        LivingEntity t = server.getEntity(be.targetId) instanceof LivingEntity e && be.valid(server, muzzle, e) ? e : null;
-        if (t == null && be.ticks % 5 == 0) {
-            // the cheap tests for everyone in range, then line of sight nearest first, stopping at the first it can see
-            // (was a ray for every candidate)
-            var near = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE),
-                    e -> be.wants(server, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE);
-            near.sort(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle)));
-            for (int i = 0; i < near.size() && i < MAX_SIGHT_CHECKS && t == null; i++)
-                if (be.sees(server, muzzle, near.get(i))) t = near.get(i);
+        if (be.items.get(AMMO).isEmpty()) {
+            // out of ammo: still turn to whatever it would shoot and click, so you can hear (and see) it's dry
+            be.targetId = -1;
+            if (be.ticks % DRY_EVERY != 0) return;
+            LivingEntity t = be.find(server, pos, muzzle);
+            if (t == null) return;
+            be.aimAt(server, pos, state, muzzle, t);
+            server.playSound(null, muzzle.x, muzzle.y, muzzle.z, ModRegistry.DRY_FIRE.get(), SoundSource.BLOCKS, 1.0F, 1.2F);
+            return;
         }
+        LivingEntity t = server.getEntity(be.targetId) instanceof LivingEntity e && be.valid(server, muzzle, e) ? e : null;
+        if (t == null && be.ticks % 5 == 0) t = be.find(server, pos, muzzle);
         be.targetId = t == null ? -1 : t.getId();
         if (t == null) return;
-        float want = (float) Math.toDegrees(Math.atan2(-(t.getX() - muzzle.x), -(t.getZ() - muzzle.z)));
-        if (Math.abs(net.minecraft.util.Mth.wrapDegrees(want - be.aim)) > 2F) {
-            be.aim = want;
-            server.sendBlockUpdated(pos, state, state, 2);              // the client turns to it too
-        }
+        float want = be.aimAt(server, pos, state, muzzle, t);
         if (be.cooldown <= 0 && Math.abs(net.minecraft.util.Mth.wrapDegrees(want - be.yaw)) <= ON_TARGET) {
             be.cooldown = RATE;
             be.fire(server, muzzle, t);
         }
+    }
+
+    /** Ticks between dry clicks while it has a target and no ammo. */
+    private static final int DRY_EVERY = 40;
+
+    /** The nearest thing in range it wants and can see: the cheap tests for everyone, then line of sight nearest first,
+     * stopping at the first it can see (was a ray for every candidate). */
+    private LivingEntity find(ServerLevel server, BlockPos pos, Vec3 muzzle) {
+        var near = server.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(RANGE),
+                e -> wants(server, e) && e.distanceToSqr(muzzle) <= RANGE * RANGE);
+        near.sort(Comparator.comparingDouble(e -> e.distanceToSqr(muzzle)));
+        for (int i = 0; i < near.size() && i < MAX_SIGHT_CHECKS; i++)
+            if (sees(server, muzzle, near.get(i))) return near.get(i);
+        return null;
+    }
+
+    /** Turn towards a target (telling the client when the aim moves); the yaw it wants. */
+    private float aimAt(ServerLevel server, BlockPos pos, BlockState state, Vec3 muzzle, LivingEntity t) {
+        float want = (float) Math.toDegrees(Math.atan2(-(t.getX() - muzzle.x), -(t.getZ() - muzzle.z)));
+        if (Math.abs(net.minecraft.util.Mth.wrapDegrees(want - aim)) > 2F) {
+            aim = want;
+            server.sendBlockUpdated(pos, state, state, 2);              // the client turns to it too
+        }
+        return want;
     }
 
     private boolean valid(ServerLevel level, Vec3 muzzle, LivingEntity e) {
@@ -187,7 +222,37 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         return false;
     }
 
-    // ---- client sync: only the aim goes over the wire ----
+    // ---- client sync: the aim, and what the Jade readout and the smoke need ----
+
+    /** Ticks between checks whether the readout's numbers changed (each shot changes two of them). */
+    private static final int SYNC_EVERY = 10;
+    private long sentSignature = Long.MIN_VALUE;
+    /** On the client: the rounds loaded and whether they are rifle rounds (the item stacks themselves aren't sent). */
+    private int clientAmmo;
+    private boolean clientRifle;
+
+    private void syncIfChanged(ServerLevel server, BlockPos pos, BlockState state) {
+        ItemStack ammo = items.get(AMMO);
+        long sig = ((long) health << 32) ^ ((long) mode.ordinal() << 24) ^ ((long) (ammo.is(ModRegistry.RIFLE_ROUNDS.get()) ? 1 : 0) << 20) ^ ammo.getCount();
+        if (sig == sentSignature) return;
+        sentSignature = sig;
+        server.sendBlockUpdated(pos, state, state, 2);
+    }
+
+    /** Lines for the Jade tooltip: ammo, condition, mode. Client side, from the synced numbers. */
+    public java.util.List<Component> readout() {
+        var out = new java.util.ArrayList<Component>();
+        out.add(clientAmmo <= 0
+                ? Component.translatable("sentry.apocalypse_toolkit.readout.no_ammo").withStyle(net.minecraft.ChatFormatting.RED)
+                : Component.translatable(clientRifle ? "sentry.apocalypse_toolkit.readout.rifle" : "sentry.apocalypse_toolkit.readout.pistol", clientAmmo));
+        int pct = Math.round(100F * health / MAX_WEAR);
+        out.add(health <= 0
+                ? Component.translatable("sentry.apocalypse_toolkit.readout.worn_out").withStyle(net.minecraft.ChatFormatting.RED)
+                : Component.translatable("sentry.apocalypse_toolkit.readout.condition", pct).withStyle(
+                        pct > 50 ? net.minecraft.ChatFormatting.GREEN : pct > 25 ? net.minecraft.ChatFormatting.YELLOW : net.minecraft.ChatFormatting.RED));
+        out.add(Component.translatable("sentry.apocalypse_toolkit.readout.mode", mode.label()));
+        return out;
+    }
 
     @Override
     public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
@@ -198,6 +263,11 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
     public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
         net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
         tag.putFloat("aim", aim);
+        tag.putInt("health", health);
+        tag.putInt("mode", mode.ordinal());
+        ItemStack ammo = items.get(AMMO);
+        tag.putInt("ammo_count", ammo.getCount());
+        tag.putBoolean("ammo_rifle", ammo.is(ModRegistry.RIFLE_ROUNDS.get()));
         return tag;
     }
 
@@ -272,6 +342,8 @@ public class SentryBlockEntity extends BlockEntity implements Container, MenuPro
         owner = input.getString("owner").map(UUID::fromString).orElse(null);
         ownerName = input.getStringOr("owner_name", "");
         aim = input.getFloatOr("aim", aim);
+        clientAmmo = input.getIntOr("ammo_count", 0);          // only in the update tag: the client's readout
+        clientRifle = input.getBooleanOr("ammo_rifle", false);
     }
 
     @Override
